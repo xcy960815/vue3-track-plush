@@ -8,13 +8,14 @@
   "scripts": {
     "dev": "NODE_ENV=development rollup -c -w",
     "build": "NODE_ENV=production rollup -c && api-extractor run && rm -rf ./temp",
+    "link": "npm link && npm link rollup-vue3-ts-template",
     "serve": "vue-cli-service serve"
   },
   "peerDependencies": {
     "vue": "^3.2.25"
   },
   "dependencies": {
-    "vue": "3.2.25"
+    "vue": "^3.2.25"
   },
   "devDependencies": {
     "@babel/core": "^7.12.3",

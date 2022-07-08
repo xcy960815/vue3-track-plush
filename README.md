@@ -20,5 +20,9 @@ pnpm run build
 
 ### 预览 
 ```shell
+npm run link
+```
+### 预览查看
+```shell
 pnpm run serve
 ```
