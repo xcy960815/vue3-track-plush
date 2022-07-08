@@ -2,6 +2,7 @@ import progress from 'rollup-plugin-progress';
 import json from "rollup-plugin-json"
 import postcss from 'rollup-plugin-postcss'
 import vue from '@vitejs/plugin-vue'
+import vue1 from "rollup-plugin-vue"
 import {
     terser
 } from 'rollup-plugin-terser'
@@ -16,14 +17,15 @@ import {
 } from '@babel/core'
 import livereload from 'rollup-plugin-livereload'
 import del from "rollup-plugin-delete"
+import path from "path"
 
+import alias from '@rollup/plugin-alias';
 // 判断是不是 生产环境
 const isDev = process.env.NODE_ENV !== 'production'
 
 
 // 初始化配置
 const initConfig = () => {
-
 
     return {
         input: 'src/index.ts',
@@ -41,7 +43,7 @@ const initConfig = () => {
                 format: 'esm',
                 name: "RollupVue3TsTemplate",
                 globals: {
-                    "vue": 'vue',
+                    vue: 'vue',
                 },
             }
         ],
@@ -49,14 +51,17 @@ const initConfig = () => {
             del({
                 targets: ['dist']
             }),
+            alias({
+                entries: [{
+                        find: '@',
+                        replacement: path.resolve(__dirname, './src')
+                    },
 
-            nodeResolve({
-                mainField: ['jsnext:main', 'browser', 'module', 'main'],
-                browser: true,
-                // dedupe: ['vue']
+                ]
             }),
 
             vue(),
+
 
             typescript2({
                 // 将根目录的tsconfig.json作为配置文件
@@ -64,9 +69,13 @@ const initConfig = () => {
                 abortOnError: false
             }),
 
-
             commonjs(),
-
+            nodeResolve({
+                // mainField: ['jsnext:main', 'browser', 'module', 'main'],
+                // browser: true,
+                // dedupe: ['vue']
+                extensions: ['.mjs', '.js', '.ts', '.jsx', '.tsx', '.json'],
+            }),
             json(),
 
             postcss({
@@ -99,7 +108,7 @@ const initConfig = () => {
             // 热更新
             isDev && livereload(),
 
-
+            // 显示打包过程 和 进度
             progress({
                 clearLine: false // default: true
             })
@@ -116,8 +125,8 @@ const initConfig = () => {
         //     console.error(`(!) ${warning.message}`)
         // },
 
-        // external: Object.keys(require(path.resolve(__dirname, './package.json')).peerDependencies || {}),
-        external: ["monaco-editor", "vue"]
+        external: Object.keys(require(path.resolve(__dirname, './package.json')).peerDependencies || {}),
+
     }
 }
 

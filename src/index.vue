@@ -4,13 +4,17 @@
   </div>
 </template>
 <script lang="ts">
-
-export default {
-  name: "rollup-vue3-ts-template"
-}
-</script>
-<script lang='ts' setup>
-
+import { testFun } from "./test"
+import { onMounted, defineComponent } from "vue"
+export default defineComponent({
+  name: "rollup-vue3-ts-template",
+  setup() {
+    onMounted(() => {
+      console.log('onMounted');
+      testFun()
+    })
+  }
+}) 
 </script>
 <style lang='less' scoped>
 </style>

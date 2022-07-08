@@ -1,5 +1,7 @@
 {
   "compilerOptions": {
+    "isolatedModules": true,
+    "skipLibCheck": true,
     "baseUrl": ".",
     "module": "esnext",
     "noImplicitAny": false,
@@ -13,6 +15,11 @@
       "ESNext",
       "DOM"
     ],
+    "paths": {
+      "@/*": [
+        "src/*"
+      ]
+    },
     "allowSyntheticDefaultImports": true,
     "experimentalDecorators": true,
     "forceConsistentCasingInFileNames": true,

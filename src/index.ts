@@ -1,7 +1,8 @@
-// @ts-ignore
+
 import RollupVue3TsTemplate from "./index.vue";
 
 import { App, Plugin } from "vue";
+
 
 
 const RollupVue3TsTemplateComponent = RollupVue3TsTemplate as typeof RollupVue3TsTemplate & Plugin
