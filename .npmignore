@@ -7,6 +7,7 @@ node_modules
 package-lock.json
 rollup.config.js
 api-extractor.json
+/example
 
 # local env files
 .env.local

@@ -16,7 +16,7 @@
   },
   "dtsRollup": {
     "enabled": true,
-    "untrimmedFilePath": "./types/vue3-monaco-editor.d.ts" // 生成到指定的文件件内叫指定的文件名
+    "untrimmedFilePath": "./types/rollup-vue3-ts-template.d.ts" // 生成到指定的文件件内叫指定的文件名
   },
   "tsdocMetadata": {
     "enabled": false

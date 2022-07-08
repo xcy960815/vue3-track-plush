@@ -17,3 +17,8 @@ pnpm run dev
 ``` shell
 pnpm run build
 ```
+
+### 预览 
+```shell
+pnpm run serve
+```
