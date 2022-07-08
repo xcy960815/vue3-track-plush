@@ -13,7 +13,7 @@ pnpm i
 pnpm run dev
 ```
 
-### 发布
+### 打包
 ``` shell
 pnpm run build
 ```
