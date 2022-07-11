@@ -1,7 +1,10 @@
 
 import { createApp } from "vue";
 import App from "./App.vue";
-import rollupVue3TsTemplate from "rollup-vue3-ts-template"
+import Vue3TrackPlush from "vue3-track-plush"
 const app = createApp(App)
-app.use(rollupVue3TsTemplate)
+app.use(Vue3TrackPlush, {
+    baseURL: "http://d.vdian.net",
+    url: "/api/action/record"
+})
 app.mount("#app");

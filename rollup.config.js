@@ -30,7 +30,7 @@ const initConfig = () => {
     return {
         input: 'src/index.ts',
         output: [{
-                file: 'dist/rollup-vue3-ts-template.umd.js',
+                file: 'dist/vue3-track-plush.umd.js',
                 format: 'umd',
                 exports: 'named', // 关闭   Mixing named and default exports  警告
                 name: "RollupVue3TsTemplate",
@@ -39,7 +39,7 @@ const initConfig = () => {
                 },
             },
             {
-                file: 'dist/rollup-vue3-ts-template.esm.js',
+                file: 'dist/vue3-track-plush.esm.js',
                 format: 'esm',
                 name: "RollupVue3TsTemplate",
                 globals: {

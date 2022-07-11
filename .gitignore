@@ -1,7 +1,13 @@
 .DS_Store
 node_modules
 /dist
-
+/public
+/src
+.browserslistrc
+package-lock.json
+rollup.config.js
+api-extractor.json
+/example
 
 # local env files
 .env.local

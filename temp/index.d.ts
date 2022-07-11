@@ -1,8 +1,30 @@
-import { Plugin } from "vue";
-declare const RollupVue3TsTemplateComponent: {
-    new (...args: any[]): any;
-    __isFragment?: never;
-    __isTeleport?: never;
-    __isSuspense?: never;
-} & import("vue").ComponentOptionsBase<Readonly<{} & {} & {}>, {}, any, import("vue").ComputedOptions, import("vue").MethodOptions, import("vue").ComponentOptionsMixin, import("vue").ComponentOptionsMixin, {}, string, {}> & import("vue").VNodeProps & import("vue").AllowedComponentProps & import("vue").ComponentCustomProps & Plugin;
-export default RollupVue3TsTemplateComponent;
+import { App } from "vue";
+export declare type Entry = {
+    type: 'customize' | 'instruction';
+    buttonName?: string;
+    el?: HTMLElement;
+    pageName?: string;
+};
+export declare type Method = 'GET' | 'POST';
+export declare type TrackPlushConfig = {
+    projectName: string;
+    baseURL: string;
+    url: string;
+    pageName?: string;
+    pageUrl?: string;
+    userAgent?: Navigator['userAgent'];
+    method?: Method;
+    buttonName?: string;
+};
+export declare type RequestConfig = {
+    baseURL: string;
+    url: string;
+    method: Method;
+    data: any;
+};
+export declare const clickEvent: (trackPlushConfig: TrackPlushConfig) => void;
+export declare const browseEvent: (trackPlushConfig: TrackPlushConfig) => void;
+declare const _default: {
+    install: (app: App<any>, trackPlushConfig: TrackPlushConfig) => void;
+};
+export default _default;

@@ -1,4 +1,4 @@
-# rollup-vue3-ts-template
+# vue3-track-plush
 
 ### rollup 打包vue3 组件库模板
 

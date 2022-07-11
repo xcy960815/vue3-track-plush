@@ -1,14 +1,14 @@
 <template>
     <div class='example'>
-        APPPPPPPP
+        example
+        <button v-track:click="123">click me</button>
     </div>
-    <rollup-vue3-ts-template></rollup-vue3-ts-template>
 </template>
 <script lang='ts' setup>
 import { onMounted, defineComponent } from "vue"
 
 onMounted(() => {
-    console.log('onMounted');
+
 })
 
 </script>
