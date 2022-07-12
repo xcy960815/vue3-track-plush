@@ -28,17 +28,27 @@ export type TrackPlushConfig = {
 }
 
 
+export type TrackParams = {
+    buttonName?: string
+    userAgent: string, //客户端设备
+    pageUrl: string, //当前页面路径
+    projectName: string, //项目名称
+    actionType: '点击事件' | '浏览事件',
+    pageName?: string,
+}
+
 export type RequestConfig = {
     baseURL: string,
     url: string,
     method: Method,
-    data: any,
+    data: TrackParams,
 }
 
 // 指令 触发
 const install = function (app: App, trackPlushConfig: TrackPlushConfig): void {
     app.directive('track', {
         mounted(el: HTMLElement, binding: DirectiveBinding) {
+
             const { arg } = binding
             arg.split('|').forEach((item: 'click' | 'exposure' | 'browse') => {
                 // 点击埋点

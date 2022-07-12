@@ -1,7 +1,7 @@
 import {
     createRequest
 } from './fetch'
-import { TrackPlushConfig, Entry } from "./index"
+import { TrackPlushConfig, Entry, TrackParams } from "./index"
 
 // 页面浏览
 export default class Browse {
@@ -37,12 +37,12 @@ export default class Browse {
      * @param {Object} data
      * @returns void
      */
-    handleSendTrack(data) {
+    handleSendTrack(trackParams: TrackParams): void {
         createRequest({
             baseURL: this.trackPlushConfig.baseURL,
             url: this.trackPlushConfig.url,
             method: this.trackPlushConfig.method || 'POST',
-            data,
+            data: trackParams,
         })
     }
 }

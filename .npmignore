@@ -9,6 +9,10 @@ rollup.config.js
 api-extractor.json
 /example
 
+vue-config.js
+
+tsconfig.json
+
 # local env files
 .env.local
 .env.*.local

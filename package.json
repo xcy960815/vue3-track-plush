@@ -1,11 +1,11 @@
 {
   "name": "vue3-track-plush",
   "description": "基于vue3自定义指令的埋点统计",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "private": false,
   "main": "dist/vue3-track-plush.umd.js",
   "module": "dist/vue3-track-plush.esm.js",
-  "types": "tem/index.d.ts",
+  "types": "types/vue3-track-plush.d.ts",
   "scripts": {
     "dev": "NODE_ENV=development rollup -c -w",
     "build": "NODE_ENV=production rollup -c && api-extractor run && rm -rf ./temp",
@@ -14,8 +14,8 @@
   },
   "keywords": [
     "vue-track",
-    "vue-track-plush",
-    "vue",
+    "vue3-track-plush",
+    "vue3",
     "track"
   ],
   "author": {
@@ -23,10 +23,7 @@
     "email": "18763006837@163.com"
   },
   "peerDependencies": {
-    "vue": "^3.2.25"
-  },
-  "dependencies": {
-    "vue": "^3.2.25"
+    "vue": "^3.2.13"
   },
   "devDependencies": {
     "@babel/core": "^7.12.3",
@@ -55,7 +52,8 @@
     "rollup-plugin-vue": "6.0.0-beta.10",
     "tslib": "^2.0.3",
     "typescript": "~4.5.5",
-    "vite": "^2.9.13"
+    "vite": "^2.9.13",
+    "vue": "^3.2.13"
   },
   "engines": {
     "node": ">=14.18.0"

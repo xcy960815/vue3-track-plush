@@ -1,7 +1,7 @@
 import {
     createRequest
 } from './fetch'
-import { TrackPlushConfig, Entry } from "./index"
+import { TrackPlushConfig, Entry, TrackParams } from "./index"
 
 export default class Click {
     trackPlushConfig: TrackPlushConfig
@@ -36,7 +36,7 @@ export default class Click {
      * 事件上报
      * @param {Object} data
      */
-    handleSendTrack(trackParams) {
+    handleSendTrack(trackParams: TrackParams) {
         createRequest({
             baseURL: this.trackPlushConfig.baseURL,
             url: this.trackPlushConfig.url,
