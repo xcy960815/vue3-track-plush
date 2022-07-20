@@ -48,7 +48,7 @@ const initConfig = () => {
             }
         ],
         plugins: [
-            del({
+            !isDev && del({
                 targets: ['dist']
             }),
             alias({

@@ -1,34 +1,55 @@
 import {
     createRequest
 } from './fetch'
+
 import { TrackPlushConfig, Entry, TrackParams } from "./index"
 
 // 页面浏览
 export default class Browse {
     trackPlushConfig: TrackPlushConfig
-    constructor(trackPlushConfig) {
-        this.trackPlushConfig = trackPlushConfig || {}
+
+    constructor(trackPlushConfig: TrackPlushConfig) {
+        this.trackPlushConfig = trackPlushConfig
     }
+
     // 处理浏览事件
     handleBrowseEvent(entry: Entry) {
+        // 自定义埋点上报
         if (entry.type === 'customize') {
+            // 删掉type属性 type属性 是自用的
+            const currentEntry = JSON.parse(JSON.stringify(entry))
+            delete currentEntry.type
+
             this.handleSendTrack({
-                pageName: entry.pageName, //页面名称
-                userAgent: this.trackPlushConfig.userAgent || navigator.userAgent, // 客户端设备
-                pageUrl: this.trackPlushConfig.pageUrl || window.location.href, // 当前页面路径
-                projectName: this.trackPlushConfig.projectName, // 项目名称
+                userAgent: this.trackPlushConfig.userAgent || navigator.userAgent,
+                pageUrl: this.trackPlushConfig.pageUrl || window.location.href,
+                projectName: this.trackPlushConfig.projectName,
                 actionType: '浏览事件',
+                ...currentEntry,
             })
         } else {
-            const trackParams = entry.el.attributes['track-params']
-            const pageName = trackParams ? trackParams.value : null
-            this.handleSendTrack({
-                pageName, //页面名称
-                userAgent: this.trackPlushConfig.userAgent || navigator.userAgent, // 客户端设备
-                pageUrl: this.trackPlushConfig.pageUrl || window.location.href, // 当前页面路径
-                projectName: this.trackPlushConfig.projectName, // 项目名称
-                actionType: '浏览事件',
-            })
+            // 指令埋点上报
+
+            // 获取 节点上 track-params 属性的值 在html节点中 属性所对应的值 只能是字符串 不能传递复杂 数据
+            const trackParams: string | Object = entry.VNode.props['track-params']
+            if (typeof trackParams == "string") {
+                this.handleSendTrack({
+                    pageName: trackParams, // 如果参数类型是字符串 那就是 页面名称
+                    userAgent: this.trackPlushConfig.userAgent || navigator.userAgent,
+                    pageUrl: this.trackPlushConfig.pageUrl || window.location.href,
+                    projectName: this.trackPlushConfig.projectName,
+                    actionType: '浏览事件',
+                })
+            } else {
+                this.handleSendTrack({
+                    userAgent: this.trackPlushConfig.userAgent || navigator.userAgent,
+                    pageUrl: this.trackPlushConfig.pageUrl || window.location.href,
+                    projectName: this.trackPlushConfig.projectName,
+                    actionType: '浏览事件',
+                    ...trackParams,
+                })
+            }
+
         }
     }
 

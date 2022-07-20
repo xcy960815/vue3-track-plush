@@ -5,8 +5,8 @@ import { TrackPlushConfig, Entry, TrackParams } from "./index"
 
 export default class Click {
     trackPlushConfig: TrackPlushConfig
-    constructor(trackPlushConfig) {
-        this.trackPlushConfig = trackPlushConfig || {}
+    constructor(trackPlushConfig: TrackPlushConfig) {
+        this.trackPlushConfig = trackPlushConfig
     }
     // 处理点击事件
     handleClickEvent(entry: Entry): void {
@@ -19,16 +19,28 @@ export default class Click {
                 actionType: '点击事件',
             })
         } else {
-            const trackParams = entry.el.attributes['track-params']
-            const buttonName = trackParams ? trackParams.value : null
+            // 指令埋点上报
             entry.el.addEventListener('click', () => {
-                this.handleSendTrack({
-                    buttonName,
-                    userAgent: this.trackPlushConfig.userAgent || navigator.userAgent, //客户端设备
-                    pageUrl: this.trackPlushConfig.pageUrl || window.location.href, //当前页面路径
-                    projectName: this.trackPlushConfig.projectName, //项目名称
-                    actionType: '点击事件',
-                })
+                // 获取 节点上 track-params 属性的值 在html节点中 属性所对应的值 只能是字符串 不能传递复杂 数据
+                const trackParams: string | Object = entry.VNode.props['track-params']
+
+                if (typeof trackParams == "string") {
+                    this.handleSendTrack({
+                        buttonName: trackParams, // 如果参数类型是字符串 那就是 按钮名称
+                        userAgent: this.trackPlushConfig.userAgent || navigator.userAgent,
+                        pageUrl: this.trackPlushConfig.pageUrl || window.location.href,
+                        projectName: this.trackPlushConfig.projectName,
+                        actionType: '点击事件',
+                    })
+                } else {
+                    this.handleSendTrack({
+                        userAgent: this.trackPlushConfig.userAgent || navigator.userAgent,
+                        pageUrl: this.trackPlushConfig.pageUrl || window.location.href,
+                        projectName: this.trackPlushConfig.projectName,
+                        actionType: '点击事件',
+                        ...trackParams,
+                    })
+                }
             })
         }
     }

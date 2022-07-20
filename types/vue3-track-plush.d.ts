@@ -1,4 +1,5 @@
 import { App } from 'vue';
+import { VNode } from 'vue';
 
 export declare const browseEvent: (trackPlushConfig: TrackPlushConfig) => void;
 
@@ -11,9 +12,16 @@ export default _default;
 
 export declare type Entry = {
     type: 'customize' | 'instruction';
-    buttonName?: string;
     el?: HTMLElement;
+    VNode?: VNode;
     pageName?: string;
+    buttonName?: string;
+} & {
+    [key: string]: any;
+};
+
+export declare type EventParams = {
+    [key: string]: any;
 };
 
 export declare type Method = 'GET' | 'POST';
@@ -34,7 +42,7 @@ export declare type TrackParams = {
     pageName?: string;
 };
 
-export declare type TrackPlushConfig = {
+export declare interface TrackPlushConfig extends Record<string, string | undefined> {
     projectName: string;
     baseURL: string;
     url: string;
@@ -43,6 +51,6 @@ export declare type TrackPlushConfig = {
     userAgent?: Navigator['userAgent'];
     method?: Method;
     buttonName?: string;
-};
+}
 
 export { }

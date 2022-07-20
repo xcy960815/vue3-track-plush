@@ -1,13 +1,13 @@
 // import Exposure from './exposure'
 import Click from './click'
 import Browse from './browse'
-import { App, Plugin, DirectiveBinding } from "vue";
+import { App, Plugin, DirectiveBinding, VNode } from "vue";
 
-export type Entry = { type: 'customize' | 'instruction', buttonName?: string, el?: HTMLElement, pageName?: string }
+export type Entry = { type: 'customize' | 'instruction', el?: HTMLElement, VNode?: VNode, pageName?: string, buttonName?: string, } & { [key: string]: any }
 
 export type Method = 'GET' | 'POST'
 
-export type TrackPlushConfig = {
+export interface TrackPlushConfig extends Record<string, string | undefined> {
 
     projectName: string,
 
@@ -27,6 +27,10 @@ export type TrackPlushConfig = {
 
 }
 
+// 忽略的字段
+const ignoreField = ["baseURL", "url"]
+
+export type EventParams = { [key: string]: any }
 
 export type TrackParams = {
     buttonName?: string
@@ -45,16 +49,18 @@ export type RequestConfig = {
 }
 
 // 指令 触发
-const install = function (app: App, trackPlushConfig: TrackPlushConfig): void {
+const install = (app: App, trackPlushConfig: TrackPlushConfig): void => {
     app.directive('track', {
-        mounted(el: HTMLElement, binding: DirectiveBinding) {
+        mounted(el: HTMLElement, binding: DirectiveBinding<string | Object>, VNode: VNode) {
 
             const { arg } = binding
+
             arg.split('|').forEach((item: 'click' | 'exposure' | 'browse') => {
                 // 点击埋点
                 if (item === 'click') {
                     new Click(trackPlushConfig).handleClickEvent({
                         el,
+                        VNode,
                         type: 'instruction',
                     })
                 }
@@ -70,7 +76,7 @@ const install = function (app: App, trackPlushConfig: TrackPlushConfig): void {
                 else if (item === 'browse') {
                     new Browse(trackPlushConfig).handleBrowseEvent({
                         type: 'instruction',
-                        el,
+                        VNode,
                     })
                 }
             })
@@ -81,16 +87,26 @@ const install = function (app: App, trackPlushConfig: TrackPlushConfig): void {
 
 // 点击事件
 export const clickEvent = (trackPlushConfig: TrackPlushConfig) => {
+    const clickEventParams: EventParams = {}
+    Object.keys(trackPlushConfig).forEach((key) => {
+        if (!ignoreField.includes(key)) clickEventParams[key] = trackPlushConfig[key]
+
+    })
     new Click(trackPlushConfig).handleClickEvent({
-        buttonName: trackPlushConfig.buttonName,
+        ...clickEventParams,
         type: 'customize',
     })
 }
 
 // 浏览事件
 export const browseEvent = (trackPlushConfig: TrackPlushConfig) => {
+    const browseEventParams: EventParams = {}
+    Object.keys(trackPlushConfig).forEach((key) => {
+        if (!ignoreField.includes(key)) browseEventParams[key] = trackPlushConfig[key]
+
+    })
     new Browse(trackPlushConfig).handleBrowseEvent({
-        pageName: trackPlushConfig.pageName,
+        ...browseEventParams,
         type: 'customize',
     })
 }
