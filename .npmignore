@@ -9,7 +9,7 @@ rollup.config.js
 api-extractor.json
 /example
 
-vue-config.js
+vue.config.js
 
 tsconfig.json
 
