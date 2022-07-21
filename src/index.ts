@@ -90,8 +90,8 @@ export const clickEvent = (trackPlushConfig: TrackPlushConfig) => {
     const clickEventParams: EventParams = {}
     Object.keys(trackPlushConfig).forEach((key) => {
         if (!ignoreField.includes(key)) clickEventParams[key] = trackPlushConfig[key]
-
     })
+
     new Click(trackPlushConfig).handleClickEvent({
         ...clickEventParams,
         type: 'customize',
@@ -103,7 +103,6 @@ export const browseEvent = (trackPlushConfig: TrackPlushConfig) => {
     const browseEventParams: EventParams = {}
     Object.keys(trackPlushConfig).forEach((key) => {
         if (!ignoreField.includes(key)) browseEventParams[key] = trackPlushConfig[key]
-
     })
     new Browse(trackPlushConfig).handleBrowseEvent({
         ...browseEventParams,

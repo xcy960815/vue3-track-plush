@@ -4,19 +4,25 @@ import {
 import { TrackPlushConfig, Entry, TrackParams } from "./index"
 
 export default class Click {
+
     trackPlushConfig: TrackPlushConfig
+
     constructor(trackPlushConfig: TrackPlushConfig) {
         this.trackPlushConfig = trackPlushConfig
     }
+
     // 处理点击事件
     handleClickEvent(entry: Entry): void {
         if (entry.type === 'customize') {
+            // 删掉type属性 type属性 是自用的
+            const currentEntry = JSON.parse(JSON.stringify(entry))
+            delete currentEntry.type
             this.handleSendTrack({
-                buttonName: entry.buttonName,
                 userAgent: this.trackPlushConfig.userAgent || navigator.userAgent, //客户端设备
                 pageUrl: this.trackPlushConfig.pageUrl || window.location.href, //当前页面路径
                 projectName: this.trackPlushConfig.projectName, //项目名称
                 actionType: '点击事件',
+                ...currentEntry
             })
         } else {
             // 指令埋点上报

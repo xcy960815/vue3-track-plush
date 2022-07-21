@@ -33,7 +33,7 @@ const initConfig = () => {
                 file: 'dist/vue3-track-plush.umd.js',
                 format: 'umd',
                 exports: 'named', // 关闭   Mixing named and default exports  警告
-                name: "RollupVue3TsTemplate",
+                name: "Vue3TrackPlush",
                 globals: {
                     "vue": 'vue',
                 },
@@ -41,7 +41,7 @@ const initConfig = () => {
             {
                 file: 'dist/vue3-track-plush.esm.js',
                 format: 'esm',
-                name: "RollupVue3TsTemplate",
+                name: "Vue3TrackPlush",
                 globals: {
                     vue: 'vue',
                 },
@@ -59,16 +59,12 @@ const initConfig = () => {
 
                 ]
             }),
-
             vue(),
-
-
             typescript2({
                 // 将根目录的tsconfig.json作为配置文件
                 useTsconfigDeclarationDir: true,
                 abortOnError: false
             }),
-
             commonjs(),
             nodeResolve({
                 // mainField: ['jsnext:main', 'browser', 'module', 'main'],
