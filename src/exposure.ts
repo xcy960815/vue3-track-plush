@@ -1,26 +1,27 @@
 import 'intersection-observer'
-import {
-    createRequest
-} from './fetch'
+// import {
+//     createRequest
+// } from './fetch'
 
 // 节流时间调整，默认100ms
 IntersectionObserver.prototype['THROTTLE_TIMEOUT'] = 300
 
-export interface TrackPlushConfig {
+export interface TrackConfig {
     maxNum?: number
 }
 
 export default class Exposure {
-    trackPlushConfig: TrackPlushConfig
+    trackConfig: TrackConfig
     maxNum: number
-    _timer: any
+    _timer: NodeJS.Timer | null
     _observer: IntersectionObserver
     cacheDataArr: Array<string>
-    constructor(trackPlushConfig) {
-        this.trackPlushConfig = trackPlushConfig
+
+    constructor(trackConfig) {
+        this.trackConfig = trackConfig
         this.cacheDataArr = []
-        this.maxNum = trackPlushConfig.maxNum || 20
-        this._timer = 0
+        this.maxNum = trackConfig.maxNum || 20
+        this._timer = null
         this._observer = null
         this.init()
     }
@@ -87,10 +88,10 @@ export default class Exposure {
         // track(data)
         // new request({
         //     timeout: 10000,
-        //     baseURL: this.trackPlushConfig.baseURL,
+        //     baseURL: this.trackConfig.baseURL,
         //     withCredentials: true,
-        //     url: this.trackPlushConfig.url,
-        //     method: this.trackPlushConfig.method || 'post',
+        //     url: this.trackConfig.url,
+        //     method: this.trackConfig.method || 'post',
         //     data,
         // })
         // 更新localStoragee

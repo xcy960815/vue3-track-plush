@@ -1,115 +1,102 @@
 // import Exposure from './exposure'
+// 曝光埋点
+// else if (handleType === 'exposure') {
+//     new Exposure(trackConfig).handleExposureEvent({
+//         el,
+//     })
+// }
+
+import { App, DirectiveBinding } from "vue";
+import { TrackConfig, TrackParams, EventTrackConfig } from "./types"
 import Click from './click'
 import Browse from './browse'
-import { App, Plugin, DirectiveBinding, VNode } from "vue";
-
-export type Entry = { type: 'customize' | 'instruction', el?: HTMLElement, VNode?: VNode, pageName?: string, buttonName?: string, } & { [key: string]: any }
-
-export type Method = 'GET' | 'POST'
-
-export interface TrackPlushConfig extends Record<string, string | undefined> {
-
-    projectName: string,
-
-    baseURL: string,
-
-    url: string
-
-    pageName?: string
-
-    pageUrl?: string
-
-    userAgent?: Navigator['userAgent']
-
-    method?: Method
-
-    buttonName?: string
-
-}
-
-// 忽略的字段
-const ignoreField = ["baseURL", "url"]
-
-export type EventParams = { [key: string]: any }
-
-export type TrackParams = {
-    buttonName?: string
-    userAgent: string, //客户端设备
-    pageUrl: string, //当前页面路径
-    projectName: string, //项目名称
-    actionType: '点击事件' | '浏览事件',
-    pageName?: string,
-}
-
-export type RequestConfig = {
-    baseURL: string,
-    url: string,
-    method: Method,
-    data: TrackParams,
-}
-
-// 指令 触发
-const install = (app: App, trackPlushConfig: TrackPlushConfig): void => {
-    app.directive('track', {
-        mounted(el: HTMLElement, binding: DirectiveBinding<string | Object>, VNode: VNode) {
-
-            const { arg } = binding
-
-            arg.split('|').forEach((item: 'click' | 'exposure' | 'browse') => {
-                // 点击埋点
-                if (item === 'click') {
-                    new Click(trackPlushConfig).handleClickEvent({
-                        el,
-                        VNode,
-                        type: 'instruction',
-                    })
-                }
-
-                // 曝光埋点
-                // else if (item === 'exposure') {
-                //     new Exposure(trackPlushConfig).handleExposureEvent({
-                //         el,
-                //     })
-                // }
-
-                // 浏览埋点
-                else if (item === 'browse') {
-                    new Browse(trackPlushConfig).handleBrowseEvent({
-                        type: 'instruction',
-                        VNode,
-                    })
-                }
-            })
-        },
-    })
-}
 
 
 // 点击事件
-export const clickEvent = (trackPlushConfig: TrackPlushConfig) => {
-    const clickEventParams: EventParams = {}
-    Object.keys(trackPlushConfig).forEach((key) => {
-        if (!ignoreField.includes(key)) clickEventParams[key] = trackPlushConfig[key]
+export const clickEvent = (trackConfig: EventTrackConfig) => {
+    const clickInstance = new Click(trackConfig)
+    const trackParams: TrackParams = {}
+    Object.keys(trackConfig).forEach((key) => {
+        if (!['baseURL', 'url', 'projectName'].includes(key)) {
+            const value = trackConfig[key]
+            trackParams[key] = value
+        }
     })
-
-    new Click(trackPlushConfig).handleClickEvent({
-        ...clickEventParams,
-        type: 'customize',
-    })
+    clickInstance.handleSendTrack(trackParams)
 }
 
 // 浏览事件
-export const browseEvent = (trackPlushConfig: TrackPlushConfig) => {
-    const browseEventParams: EventParams = {}
-    Object.keys(trackPlushConfig).forEach((key) => {
-        if (!ignoreField.includes(key)) browseEventParams[key] = trackPlushConfig[key]
+export const browseEvent = (trackConfig: EventTrackConfig) => {
+    const browserInstance = new Browse(trackConfig)
+    const trackParams: TrackParams = {}
+    Object.keys(trackConfig).forEach((key) => {
+        if (!['baseURL', 'url', 'projectName'].includes(key)) {
+            const value = trackConfig[key]
+            trackParams[key] = value
+        }
     })
-    new Browse(trackPlushConfig).handleBrowseEvent({
-        ...browseEventParams,
-        type: 'customize',
-    })
+    browserInstance.handleSendTrack(trackParams)
 }
 
-export default {
-    install,
+class Vue3TrackPlush {
+    clickInstance: Click
+    browserInstance: Browse
+    static install(app: App, trackConfig: TrackConfig) {
+        Vue3TrackPlush.prototype.clickInstance = Click.getInstance(trackConfig)
+        Vue3TrackPlush.prototype.browserInstance = Browse.getInstance(trackConfig)
+        app.directive('track', {
+            mounted(el: HTMLElement, binding: DirectiveBinding<TrackParams>) {
+                const { arg: trackType, value: trackParams } = binding
+                switch (trackType) {
+                    // 点击埋点
+                    case 'click':
+                        // 绑定点击事件
+                        Vue3TrackPlush.prototype.clickInstance.handleAddClickEvent({ el, trackParams })
+                        break;
+                    case 'browse':
+                        Vue3TrackPlush.prototype.browserInstance.handleBrowseEvent(trackParams)
+                        break;
+                    default:
+                        break;
+                }
+            },
+
+            updated(el: HTMLElement, binding: DirectiveBinding<string | Object>) {
+                const { arg: trackType, value, oldValue } = binding
+                if (JSON.stringify(value) !== JSON.stringify(oldValue)) {
+                    switch (trackType) {
+                        // 点击埋点
+                        case 'click':
+                            // 移除点击事件
+                            Vue3TrackPlush.prototype.clickInstance.handleRemoveClickEvent(el)
+                            // 绑定点击事件
+                            Vue3TrackPlush.prototype.clickInstance.handleAddClickEvent({ el, trackParams: value })
+                            break;
+                        case 'browse':
+                            Vue3TrackPlush.prototype.browserInstance.handleBrowseEvent(value)
+                            break;
+                        default:
+                            break;
+                    }
+                }
+            },
+
+            unmounted(el: HTMLElement, binding: DirectiveBinding<TrackParams>) {
+                const { arg: trackType } = binding
+                switch (trackType) {
+                    // 点击埋点
+                    case 'click':
+                        // 移除点击事件
+                        Vue3TrackPlush.prototype.clickInstance.handleRemoveClickEvent(el)
+                        break;
+                    case 'browse':
+                        break;
+                    default:
+                        break;
+                }
+            }
+        })
+    }
 }
+
+export default Vue3TrackPlush

@@ -1,56 +1,22 @@
 import { App } from 'vue';
-import { VNode } from 'vue';
 
-export declare const browseEvent: (trackPlushConfig: TrackPlushConfig) => void;
+export declare const browseEvent: (trackConfig: TrackConfig) => void;
 
-export declare const clickEvent: (trackPlushConfig: TrackPlushConfig) => void;
+export declare const clickEvent: (trackConfig: TrackConfig) => void;
 
 declare const _default: {
-    install: (app: App<any>, trackPlushConfig: TrackPlushConfig) => void;
+    install: (app: App<any>, trackConfig: TrackConfig) => void;
 };
 export default _default;
 
-export declare type Entry = {
-    type: 'customize' | 'instruction';
-    el?: HTMLElement;
-    VNode?: VNode;
-    pageName?: string;
-    buttonName?: string;
-} & {
-    [key: string]: any;
-};
-
-export declare type EventParams = {
-    [key: string]: any;
-};
-
-export declare type Method = 'GET' | 'POST';
-
-export declare type RequestConfig = {
+export declare interface TrackConfig extends Record<string, any> {
     baseURL: string;
     url: string;
-    method: Method;
-    data: TrackParams;
-};
+    projectName?: string;
+}
 
 export declare type TrackParams = {
-    buttonName?: string;
-    userAgent: string;
-    pageUrl: string;
-    projectName: string;
-    actionType: '点击事件' | '浏览事件';
-    pageName?: string;
-};
-
-export declare interface TrackPlushConfig extends Record<string, string | undefined> {
-    projectName: string;
-    baseURL: string;
-    url: string;
-    pageName?: string;
-    pageUrl?: string;
-    userAgent?: Navigator['userAgent'];
-    method?: Method;
-    buttonName?: string;
-}
+    [key: string]: any;
+} | string | boolean | number;
 
 export { }

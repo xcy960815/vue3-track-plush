@@ -2,7 +2,6 @@ import progress from 'rollup-plugin-progress';
 import json from "rollup-plugin-json"
 import postcss from 'rollup-plugin-postcss'
 import vue from '@vitejs/plugin-vue'
-import vue1 from "rollup-plugin-vue"
 import {
     terser
 } from 'rollup-plugin-terser'
@@ -30,22 +29,22 @@ const initConfig = () => {
     return {
         input: 'src/index.ts',
         output: [{
-                file: 'dist/vue3-track-plush.umd.js',
-                format: 'umd',
-                exports: 'named', // 关闭   Mixing named and default exports  警告
-                name: "Vue3TrackPlush",
-                globals: {
-                    "vue": 'vue',
-                },
+            file: 'dist/vue3-track-plush.umd.js',
+            format: 'umd',
+            exports: 'named', // 关闭   Mixing named and default exports  警告
+            name: "Vue3TrackPlush",
+            globals: {
+                "vue": 'vue',
             },
-            {
-                file: 'dist/vue3-track-plush.esm.js',
-                format: 'esm',
-                name: "Vue3TrackPlush",
-                globals: {
-                    vue: 'vue',
-                },
-            }
+        },
+        {
+            file: 'dist/vue3-track-plush.esm.js',
+            format: 'esm',
+            name: "Vue3TrackPlush",
+            globals: {
+                vue: 'vue',
+            },
+        }
         ],
         plugins: [
             !isDev && del({
@@ -53,9 +52,9 @@ const initConfig = () => {
             }),
             alias({
                 entries: [{
-                        find: '@',
-                        replacement: path.resolve(__dirname, './src')
-                    },
+                    find: '@',
+                    replacement: path.resolve(__dirname, './src')
+                },
 
                 ]
             }),

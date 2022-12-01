@@ -1,65 +1,66 @@
-import {
-    createRequest
-} from './fetch'
-import { TrackPlushConfig, Entry, TrackParams } from "./index"
+import { createRequest } from './fetch'
+import { TrackConfig, TrackParams } from "./types"
 
 export default class Click {
 
-    trackPlushConfig: TrackPlushConfig
+    trackConfig: TrackConfig
 
-    constructor(trackPlushConfig: TrackPlushConfig) {
-        this.trackPlushConfig = trackPlushConfig
+    trackParams: TrackParams
+
+    // 单例模式
+    static instance: Click
+
+    constructor(trackConfig: TrackConfig) {
+        this.trackConfig = trackConfig
     }
 
-    // 处理点击事件
-    handleClickEvent(entry: Entry): void {
-        if (entry.type === 'customize') {
-            // 删掉type属性 type属性 是自用的
-            const currentEntry = JSON.parse(JSON.stringify(entry))
-            delete currentEntry.type
-            this.handleSendTrack({
-                userAgent: this.trackPlushConfig.userAgent || navigator.userAgent, //客户端设备
-                pageUrl: this.trackPlushConfig.pageUrl || window.location.href, //当前页面路径
-                projectName: this.trackPlushConfig.projectName, //项目名称
-                actionType: '点击事件',
-                ...currentEntry
-            })
-        } else {
-            // 指令埋点上报
-            entry.el.addEventListener('click', () => {
-                // 获取 节点上 track-params 属性的值 在html节点中 属性所对应的值 只能是字符串 不能传递复杂 数据
-                const trackParams: string | Object = entry.VNode.props['track-params']
-
-                if (typeof trackParams == "string") {
-                    this.handleSendTrack({
-                        buttonName: trackParams, // 如果参数类型是字符串 那就是 按钮名称
-                        userAgent: this.trackPlushConfig.userAgent || navigator.userAgent,
-                        pageUrl: this.trackPlushConfig.pageUrl || window.location.href,
-                        projectName: this.trackPlushConfig.projectName,
-                        actionType: '点击事件',
-                    })
-                } else {
-                    this.handleSendTrack({
-                        userAgent: this.trackPlushConfig.userAgent || navigator.userAgent,
-                        pageUrl: this.trackPlushConfig.pageUrl || window.location.href,
-                        projectName: this.trackPlushConfig.projectName,
-                        actionType: '点击事件',
-                        ...trackParams,
-                    })
-                }
-            })
+    static getInstance(trackConfig: TrackConfig): Click {
+        if (!this.instance) {
+            this.instance = new Click(trackConfig)
         }
+        return this.instance
     }
     /**
-     * 事件上报
+     * @description 添加点击事件
+     * @returns {void}
+     */
+    handleAddClickEvent(params: { el: HTMLElement, trackParams: TrackParams }): void {
+        const { el, trackParams } = params
+        this.trackParams = trackParams
+        el.addEventListener('click', this.handleClickEvent)
+    }
+    /**
+     * @description 移出点击事件
+     * @returns {void}
+     */
+    handleRemoveClickEvent(el: HTMLElement): void {
+        el.removeEventListener('click', this.handleClickEvent)
+    }
+
+    /**
+     * @desc 处理指令点击事件
+     * @param {{ el: HTMLElement  }} params 
+     */
+    handleClickEvent = () => {
+        this.handleSendTrack(typeof this.trackParams == "object" ? this.trackParams : { buttonName: this.trackParams })
+    }
+
+    /**
+     * @description 事件上报
      * @param {Object} data
      */
     handleSendTrack(trackParams: TrackParams) {
+        const requestParams = Object.assign({
+            userAgent: navigator.userAgent,
+            pageUrl: window.location.href,
+            projectName: this.trackConfig.projectName,
+            actionType: '点击事件',
+        }, trackParams)
+
         createRequest({
-            baseURL: this.trackPlushConfig.baseURL,
-            url: this.trackPlushConfig.url,
-            method: this.trackPlushConfig.method || 'POST',
-            data: trackParams,
+            baseURL: this.trackConfig.baseURL,
+            url: this.trackConfig.url,
+            data: requestParams,
         })
     }
 }

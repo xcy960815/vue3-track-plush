@@ -1,7 +1,7 @@
 {
   "name": "vue3-track-plush",
   "description": "基于vue3自定义指令的埋点统计",
-  "version": "0.1.4",
+  "version": "1.0.0",
   "private": false,
   "main": "dist/vue3-track-plush.umd.js",
   "module": "dist/vue3-track-plush.esm.js",
@@ -19,8 +19,13 @@
     "track"
   ],
   "author": {
-    "name": "xuchongyu",
+    "name": "xcy960815",
     "email": "18763006837@163.com"
+  },
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/xcy960815/vue3-track-plush"
   },
   "peerDependencies": {
     "vue": "^3.2.13"
@@ -37,7 +42,9 @@
     "@vitejs/plugin-vue": "2.3.3",
     "@vue/cli-plugin-typescript": "5.0.0",
     "@vue/cli-service": "^5.0.8",
+    "@vue/shared": "^3.2.45",
     "autoprefixer": "^10.4.7",
+    "element-plus": "^2.2.9",
     "less": "^4.1.3",
     "less-loader": "^11.0.0",
     "rollup": "^2.33.1",
