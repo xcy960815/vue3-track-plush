@@ -1,16 +1,8 @@
-// import Exposure from './exposure'
-// 曝光埋点
-// else if (handleType === 'exposure') {
-//     new Exposure(trackConfig).handleExposureEvent({
-//         el,
-//     })
-// }
-
 import { App, DirectiveBinding } from "vue";
 import { TrackConfig, TrackParams, EventTrackConfig } from "./types"
 import Click from './click'
 import Browse from './browse'
-
+// import Exposure from './exposure'
 
 // 点击事件
 export const clickEvent = (trackConfig: EventTrackConfig) => {
@@ -56,6 +48,12 @@ class Vue3TrackPlush {
                     case 'browse':
                         Vue3TrackPlush.prototype.browserInstance.handleBrowseEvent(trackParams)
                         break;
+                    // 曝光埋点
+                    // case 'exposure':
+                    //     Vue3TrackPlush.prototype.exposureInstance.handleExposureEvent({
+                    //         el,
+                    //         trackParams,
+                    //     })
                     default:
                         break;
                 }
@@ -75,6 +73,13 @@ class Vue3TrackPlush {
                         case 'browse':
                             Vue3TrackPlush.prototype.browserInstance.handleBrowseEvent(value)
                             break;
+                        // 曝光埋点
+                        // case 'exposure':
+                        //     Vue3TrackPlush.prototype.exposureInstance.handleExposureEvent({
+                        //         el,
+                        //         trackParams: value,
+                        //     })
+                        // break;
                         default:
                             break;
                     }
@@ -98,5 +103,13 @@ class Vue3TrackPlush {
         })
     }
 }
+
+export {
+    Click,
+    Browse,
+    // Exposure,
+}
+
+export type { TrackConfig, EventTrackConfig, TrackParams };
 
 export default Vue3TrackPlush
