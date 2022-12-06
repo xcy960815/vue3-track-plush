@@ -10,10 +10,8 @@
         </button>
       </div>
       <h3>测试参数传递字符串</h3>
-      <div class="button-box" v-track:browse track-params="example">
-        <button v-track:click="'指令点击上报(参数是字符串)'">
-          指令点击上报(参数是字符串)
-        </button>
+      <div class="button-box" v-track:browse="'页面名称'">
+        <button v-track:click="'按钮名称'">指令点击上报(参数是字符串)</button>
       </div>
     </div>
     <div class="container-item">
@@ -72,7 +70,7 @@ const browseNumber = ref(0);
 // 自定义点击上报
 const customClickReport = () => {
   clickEvent({
-    baseURL: "http://d.daily.vdian.net",
+    baseURL: "host",
     url: "/api/action/record",
     projectName: "测试开发",
     buttonName: "自定义点击上报",
@@ -86,7 +84,7 @@ const customClickReport = () => {
 // 自定义浏览上报
 const customBrowseReport = () => {
   browseEvent({
-    baseURL: "http://d.daily.vdian.net",
+    baseURL: "host",
     url: "/api/action/record",
     projectName: "测试开发",
     pageName: "自定义浏览上报",

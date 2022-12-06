@@ -10,7 +10,7 @@ const app = createApp(App)
 app.use(ElementPlus)
 
 app.use(Vue3TrackPlush, {
-    baseURL: "http://d.daily.vdian.net",
+    baseURL: "host",
     url: "/api/action/record",
     projectName: "项目名称",
 })
