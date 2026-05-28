@@ -30,6 +30,7 @@ interface TrackPlushConfig extends Record<string, unknown> {
     exposureQueueFlushInterval?: number;
     exposureQueueStorageKey?: string;
     exposureQueueStorage?: Storage;
+    debug?: boolean;
     transport?: TrackTransport;
 }
 type TrackPayloadData = TrackPayload | TrackPayload[];
@@ -47,6 +48,7 @@ interface RequestConfig {
     url: string;
     method?: TrackMethod;
     data: TrackPayloadData;
+    debug?: boolean;
 }
 interface TrackTransport {
     send: (requestConfig: RequestConfig) => Promise<void> | void;

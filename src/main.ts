@@ -12,6 +12,7 @@ app.use(Vue3TrackPlush, {
   url: '/action/record',
   projectName: 'vue3-track-plush-demo',
   exposureDuration: 300,
+  debug: import.meta.env.DEV,
 });
 
 app.mount('#app');

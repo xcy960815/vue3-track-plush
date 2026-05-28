@@ -12,6 +12,10 @@ const createRequestUrl = (requestConfig: RequestConfig): string => {
   return `${requestConfig.baseURL}${requestConfig.url}`;
 };
 
+const outputDebugLog = (requestConfig: RequestConfig): void => {
+  console.log('[vue3-track-plush debug]', JSON.stringify(requestConfig.data, null, 2));
+};
+
 const sendByBeacon = (url: string, data: TrackPayloadData): boolean => {
   if (typeof navigator === 'undefined' || typeof navigator.sendBeacon !== 'function') return false;
 
@@ -54,6 +58,11 @@ const sendByXhr = (url: string, method: TrackMethod, data: TrackPayloadData): vo
 export const defaultTransport: TrackTransport = {
   send(requestConfig) {
     assertRequestConfig(requestConfig);
+
+    if (requestConfig.debug) {
+      outputDebugLog(requestConfig);
+      return;
+    }
 
     const url = createRequestUrl(requestConfig);
     const method = (requestConfig.method || DEFAULT_METHOD).toUpperCase() as TrackMethod;

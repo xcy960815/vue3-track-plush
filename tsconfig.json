@@ -51,6 +51,7 @@
     "plugin/type.ts",
     "plugin/transport/index.ts",
     "plugin/utils/params.ts",
-    "src/shims-vue.d.ts"
+    "src/shims-vue.d.ts",
+    "src/vite-env.d.ts"
   ]
 }

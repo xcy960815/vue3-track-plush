@@ -81,6 +81,7 @@ export class ExposureQueue {
       baseURL: this.config.baseURL,
       url: this.config.url,
       method: this.config.method,
+      debug: this.config.debug,
       data,
     });
 
@@ -150,4 +151,3 @@ export class ExposureQueue {
     return value;
   }
 }
-

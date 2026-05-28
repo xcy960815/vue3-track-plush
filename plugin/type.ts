@@ -35,6 +35,7 @@ export interface TrackPlushConfig extends Record<string, unknown> {
   exposureQueueFlushInterval?: number;
   exposureQueueStorageKey?: string;
   exposureQueueStorage?: Storage;
+  debug?: boolean;
   transport?: TrackTransport;
 }
 
@@ -55,6 +56,7 @@ export interface RequestConfig {
   url: string;
   method?: TrackMethod;
   data: TrackPayloadData;
+  debug?: boolean;
 }
 
 export interface TrackTransport {

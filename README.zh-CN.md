@@ -13,6 +13,7 @@
 - 曝光参数可配置：`threshold`、`duration`、`once`、`root`、`rootMargin`。
 - 曝光队列支持数量触发、定时触发、本地缓存和页面离开兜底上报。
 - 支持自定义上报 transport。
+- 支持本地开发 debug 模式。
 - 默认上报优先使用 `navigator.sendBeacon`，然后回退到 `fetch` 和 `XMLHttpRequest`。
 - 内置 TypeScript 类型声明。
 - 使用 Vite 作为 demo 和库构建工具。
@@ -181,6 +182,7 @@ app.use(Vue3TrackPlush, {
   exposureQueueMaxSize: 20,
   exposureQueueFlushInterval: 2000,
   exposureQueueStorageKey: 'vue3-track-plush:exposure-queue',
+  debug: import.meta.env.DEV,
 });
 ```
 
@@ -201,6 +203,7 @@ app.use(Vue3TrackPlush, {
 | `exposureQueueFlushInterval` | `number` | 否 | `2000` | 曝光队列定时上报间隔，单位毫秒。 |
 | `exposureQueueStorageKey` | `string` | 否 | `'vue3-track-plush:exposure-queue'` | 待上报曝光数据的本地缓存 key。 |
 | `exposureQueueStorage` | `Storage` | 否 | `window.localStorage` | 待上报曝光数据的自定义缓存。 |
+| `debug` | `boolean` | 否 | `false` | 在控制台打印上报 JSON，并跳过网络请求。 |
 | `transport` | `TrackTransport` | 否 | 内置 transport | 自定义上报实现。 |
 
 ## 上报数据
@@ -253,6 +256,31 @@ app.use(Vue3TrackPlush, {
   projectName: 'example-app',
   transport,
 });
+```
+
+## Debug 模式
+
+本地开发时可以打开 `debug` 来查看上报数据，同时避免真实接口调用。当 `debug` 为 `true` 时，内置 transport 只会在控制台打印 JSON，不会调用 `sendBeacon`、`fetch` 或 `XMLHttpRequest`。
+
+```ts
+app.use(Vue3TrackPlush, {
+  baseURL: '/track-api',
+  url: '/action/record',
+  projectName: 'example-app',
+  debug: import.meta.env.DEV,
+});
+```
+
+控制台输出示例：
+
+```json
+{
+  "userAgent": "...",
+  "pageUrl": "http://localhost:5173/#/basic",
+  "projectName": "example-app",
+  "actionType": "点击事件",
+  "buttonName": "创建订单"
+}
 ```
 
 ## Demo

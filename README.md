@@ -13,6 +13,7 @@ A lightweight Vue 3 tracking plugin based on custom directives. It supports page
 - Configurable exposure options: `threshold`, `duration`, `once`, `root`, and `rootMargin`.
 - Exposure queue with batch flush, interval flush, local storage cache, and page-leave flush.
 - Pluggable transport layer.
+- Debug mode for local development.
 - Default transport uses `navigator.sendBeacon`, then falls back to `fetch` and `XMLHttpRequest`.
 - TypeScript declarations included.
 - Vite based demo and library build.
@@ -181,6 +182,7 @@ app.use(Vue3TrackPlush, {
   exposureQueueMaxSize: 20,
   exposureQueueFlushInterval: 2000,
   exposureQueueStorageKey: 'vue3-track-plush:exposure-queue',
+  debug: import.meta.env.DEV,
 });
 ```
 
@@ -201,6 +203,7 @@ app.use(Vue3TrackPlush, {
 | `exposureQueueFlushInterval` | `number` | No | `2000` | Exposure queue flush interval in milliseconds. |
 | `exposureQueueStorageKey` | `string` | No | `'vue3-track-plush:exposure-queue'` | Local storage key for pending exposure events. |
 | `exposureQueueStorage` | `Storage` | No | `window.localStorage` | Custom storage for pending exposure events. |
+| `debug` | `boolean` | No | `false` | Print tracking payload JSON to the console and skip network requests. |
 | `transport` | `TrackTransport` | No | built-in transport | Custom reporting transport. |
 
 ## Event Payload
@@ -253,6 +256,31 @@ app.use(Vue3TrackPlush, {
   projectName: 'example-app',
   transport,
 });
+```
+
+## Debug Mode
+
+Enable `debug` during local development to inspect tracking payloads without sending network requests. When `debug` is `true`, the built-in transport prints JSON to the console and does not call `sendBeacon`, `fetch`, or `XMLHttpRequest`.
+
+```ts
+app.use(Vue3TrackPlush, {
+  baseURL: '/track-api',
+  url: '/action/record',
+  projectName: 'example-app',
+  debug: import.meta.env.DEV,
+});
+```
+
+Console output:
+
+```json
+{
+  "userAgent": "...",
+  "pageUrl": "http://localhost:5173/#/basic",
+  "projectName": "example-app",
+  "actionType": "点击事件",
+  "buttonName": "Create order"
+}
 ```
 
 ## Demo

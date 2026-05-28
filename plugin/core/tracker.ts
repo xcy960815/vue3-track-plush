@@ -34,6 +34,7 @@ export class TrackerCore {
       baseURL: this.config.baseURL,
       url: this.config.url,
       method: this.config.method,
+      debug: this.config.debug,
       data: payload,
     });
   }
