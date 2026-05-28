@@ -1,8 +1,16 @@
 import { VNode, DirectiveBinding, App } from 'vue';
 
+type TrackEventType = 'click' | 'browse' | 'exposure';
 type TrackAction = '点击事件' | '浏览事件' | '曝光事件';
 type TrackMethod = 'GET' | 'POST';
 type TrackParamsValue = string | Record<string, unknown>;
+interface ExposureOptions {
+    once?: boolean;
+    threshold?: number;
+    duration?: number;
+    root?: Element | Document | null;
+    rootMargin?: string;
+}
 interface TrackPlushConfig extends Record<string, unknown> {
     projectName: string;
     baseURL: string;
@@ -14,6 +22,11 @@ interface TrackPlushConfig extends Record<string, unknown> {
     buttonName?: string;
     exposureName?: string;
     exposureThreshold?: number;
+    exposureOnce?: boolean;
+    exposureDuration?: number;
+    exposureRoot?: Element | Document | null;
+    exposureRootMargin?: string;
+    transport?: TrackTransport;
 }
 interface TrackPayload extends Record<string, unknown> {
     buttonName?: string;
@@ -30,6 +43,9 @@ interface RequestConfig {
     method?: TrackMethod;
     data: TrackPayload;
 }
+interface TrackTransport {
+    send: (requestConfig: RequestConfig) => Promise<void> | void;
+}
 interface DirectiveTrackEntry {
     type: 'instruction';
     el?: HTMLElement;
@@ -40,6 +56,7 @@ interface CustomTrackEntry extends Record<string, unknown> {
     type: 'customize';
 }
 type TrackEntry = DirectiveTrackEntry | CustomTrackEntry;
+type Cleanup = () => void;
 
 declare const install: (app: App<HTMLElement>, trackPlushConfig: TrackPlushConfig) => void;
 declare const clickEvent: (trackPlushConfig: TrackPlushConfig) => void;
@@ -51,4 +68,4 @@ declare const _default: {
 };
 
 export { browseEvent, clickEvent, _default as default, exposureEvent, install as vue3TrackPlush };
-export type { DirectiveTrackEntry, RequestConfig, TrackEntry, TrackMethod, TrackParamsValue, TrackPayload, TrackPlushConfig };
+export type { Cleanup, DirectiveTrackEntry, ExposureOptions, RequestConfig, TrackEntry, TrackEventType, TrackMethod, TrackParamsValue, TrackPayload, TrackPlushConfig, TrackTransport };

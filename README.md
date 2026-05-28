@@ -27,6 +27,8 @@ app.use(Vue3TrackPlush, {
   url: '<接口地址>',
   projectName: '项目名称',
   exposureThreshold: 0.5,
+  exposureDuration: 0,
+  exposureOnce: true,
 });
 
 app.mount('#app');
@@ -35,14 +37,14 @@ app.mount('#app');
 ## 指令埋点
 
 ```html
-<!-- 参数传递对象 -->
-<div class="example" v-track:browse :track-params="{ name: 'testName', pageName: 'pageName' }">
-  <button v-track:click :track-params="{ buttonName: '指令点击上报(参数是对象)' }">
+<!-- 推荐：通过指令 value 传递参数 -->
+<div class="example" v-track:browse="{ name: 'testName', pageName: 'pageName' }">
+  <button v-track:click="{ buttonName: '指令点击上报(参数是对象)' }">
     指令点击上报（参数是对象）
   </button>
 </div>
 
-<!-- 参数传递字符串 -->
+<!-- 兼容：继续支持 track-params 属性 -->
 <div class="example" v-track:browse track-params="example">
   <button v-track:click track-params="指令点击上报(参数是字符串)">
     指令点击上报（参数是字符串）
@@ -50,8 +52,13 @@ app.mount('#app');
 </div>
 
 <!-- 曝光埋点：元素进入视口达到 exposureThreshold 后上报一次 -->
-<div v-track:exposure :track-params="{ exposureName: '曝光区域', moduleName: 'banner' }">
+<div v-track:exposure="{ exposureName: '曝光区域', moduleName: 'banner' }">
   曝光埋点区域
+</div>
+
+<!-- 曝光参数可覆盖全局配置 -->
+<div v-track:exposure="{ exposureName: '停留曝光区域', duration: 1000, once: true, threshold: 0.75 }">
+  可见 1 秒后上报
 </div>
 ```
 
@@ -89,6 +96,30 @@ const customExposureReport = () => {
     param1: '参数1',
   });
 };
+```
+
+## 自定义上报
+
+默认上报优先使用 `navigator.sendBeacon`，然后回退到 `fetch` / `XMLHttpRequest`。如需完全接管请求，可以传入 `transport`。
+
+```ts
+app.use(Vue3TrackPlush, {
+  baseURL: '<接口域名>',
+  url: '<接口地址>',
+  projectName: '项目名称',
+  transport: {
+    send(requestConfig) {
+      // requestConfig.data 是最终埋点数据
+      return fetch(`${requestConfig.baseURL}${requestConfig.url}`, {
+        method: requestConfig.method || 'POST',
+        headers: {
+          'Content-Type': 'application/json;charset=UTF-8',
+        },
+        body: JSON.stringify(requestConfig.data),
+      });
+    },
+  },
+});
 ```
 
 ## 开发

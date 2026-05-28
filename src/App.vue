@@ -1,11 +1,11 @@
 <template>
   <main class="demo-page">
-    <section class="demo-panel" v-track:browse :track-params="{ pageName: '对象参数浏览', name: 'demo' }">
+    <section class="demo-panel" v-track:browse="{ pageName: '对象参数浏览', name: 'demo' }">
       <h1>vue3-track-plush</h1>
       <p>Vue 3 directive tracking plugin demo.</p>
 
       <div class="actions">
-        <button v-track:click :track-params="{ buttonName: '对象参数点击' }">指令点击上报（对象）</button>
+        <button v-track:click="{ buttonName: '对象参数点击' }">指令点击上报（对象）</button>
         <button v-track:click track-params="字符串参数点击">指令点击上报（字符串）</button>
         <button type="button" @click="customClickReport">自定义点击上报</button>
         <button type="button" @click="customBrowseReport">自定义浏览上报</button>
@@ -16,8 +16,7 @@
         <div class="spacer">向下滚动查看曝光区域</div>
         <div
           class="exposure-box"
-          v-track:exposure
-          :track-params="{ exposureName: 'Demo曝光区域', moduleName: 'scroll-area' }"
+          v-track:exposure="{ exposureName: 'Demo曝光区域', moduleName: 'scroll-area', duration: 300 }"
         >
           曝光埋点区域
         </div>

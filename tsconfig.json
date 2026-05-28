@@ -40,12 +40,16 @@
   ],
   "files": [
     "plugin/index.ts",
-    "plugin/browse.ts",
-    "plugin/click.ts",
-    "plugin/exposure.ts",
-    "plugin/fetch.ts",
+    "plugin/core/event.ts",
+    "plugin/core/tracker.ts",
+    "plugin/directive/browse.ts",
+    "plugin/directive/cleanup.ts",
+    "plugin/directive/click.ts",
+    "plugin/directive/exposure.ts",
+    "plugin/directive/index.ts",
     "plugin/type.ts",
-    "plugin/utils.ts",
+    "plugin/transport/index.ts",
+    "plugin/utils/params.ts",
     "src/shims-vue.d.ts"
   ]
 }

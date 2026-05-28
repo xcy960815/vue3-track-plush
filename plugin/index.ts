@@ -1,86 +1,38 @@
-import type { App, DirectiveBinding, VNode } from 'vue';
+import type { App } from 'vue';
 
-import { BrowseTrack } from './browse';
-import { ClickTrack } from './click';
-import { ExposureTrack } from './exposure';
-import type { TrackPlushConfig, TrackParamsValue } from './type';
+import { TrackerCore } from './core/tracker';
+import { createTrackDirective } from './directive';
+import type { TrackPlushConfig } from './type';
+import { normalizeCustomParams } from './utils/params';
 
 export type {
+  Cleanup,
   DirectiveTrackEntry,
+  ExposureOptions,
   RequestConfig,
   TrackEntry,
+  TrackEventType,
   TrackMethod,
   TrackParamsValue,
   TrackPayload,
   TrackPlushConfig,
+  TrackTransport,
 } from './type';
 
-const CLICK_EVENT = 'click';
-const BROWSE_EVENT = 'browse';
-const EXPOSURE_EVENT = 'exposure';
-
-const resolveDirectiveEvents = (arg?: string): string[] => {
-  if (!arg) return [];
-  return arg.split('|').map((item) => item.trim()).filter(Boolean);
-};
-
 const install = (app: App<HTMLElement>, trackPlushConfig: TrackPlushConfig): void => {
-  app.directive('track', {
-    mounted(
-      el: HTMLElement,
-      binding: DirectiveBinding<TrackParamsValue | undefined>,
-      vnode: VNode,
-    ) {
-      resolveDirectiveEvents(binding.arg).forEach((eventName) => {
-        if (eventName === CLICK_EVENT) {
-          new ClickTrack(trackPlushConfig).handleClickEvent({
-            el,
-            binding,
-            vnode,
-            type: 'instruction',
-          });
-        }
-
-        if (eventName === BROWSE_EVENT) {
-          new BrowseTrack(trackPlushConfig).handleBrowseEvent({
-            binding,
-            vnode,
-            type: 'instruction',
-          });
-        }
-
-        if (eventName === EXPOSURE_EVENT) {
-          new ExposureTrack(trackPlushConfig).handleExposureEvent({
-            el,
-            binding,
-            vnode,
-            type: 'instruction',
-          });
-        }
-      });
-    },
-  });
+  app.directive('track', createTrackDirective(trackPlushConfig));
 };
 
 export const clickEvent = (trackPlushConfig: TrackPlushConfig): void => {
-  new ClickTrack(trackPlushConfig).handleClickEvent({
-    ...trackPlushConfig,
-    type: 'customize',
-  });
+  new TrackerCore(trackPlushConfig).track('click', normalizeCustomParams('click', trackPlushConfig));
 };
 
 export const browseEvent = (trackPlushConfig: TrackPlushConfig): void => {
-  new BrowseTrack(trackPlushConfig).handleBrowseEvent({
-    ...trackPlushConfig,
-    type: 'customize',
-  });
+  new TrackerCore(trackPlushConfig).track('browse', normalizeCustomParams('browse', trackPlushConfig));
 };
 
 export const exposureEvent = (trackPlushConfig: TrackPlushConfig): void => {
-  new ExposureTrack(trackPlushConfig).handleExposureEvent({
-    ...trackPlushConfig,
-    type: 'customize',
-  });
+  new TrackerCore(trackPlushConfig).track('exposure', normalizeCustomParams('exposure', trackPlushConfig));
 };
 
 export { install as vue3TrackPlush };
