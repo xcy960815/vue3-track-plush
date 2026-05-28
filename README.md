@@ -1,21 +1,38 @@
 # vue3-track-plush
 
-一款基于 Vue 3 自定义指令的埋点统计插件，支持点击、浏览、曝光的指令埋点和手动埋点上报。
+[中文文档](./README.zh-CN.md)
 
-```npm
-npm i vue3-track-plush -S
+A lightweight Vue 3 tracking plugin based on custom directives. It supports page view, click, and exposure tracking through directives and manual reporting APIs.
+
+## Features
+
+- Vue 3 plugin with a single `v-track` directive.
+- Supports `click`, `browse`, and `exposure` events.
+- Manual APIs: `clickEvent`, `browseEvent`, and `exposureEvent`.
+- Exposure tracking based on `IntersectionObserver`.
+- Configurable exposure options: `threshold`, `duration`, `once`, `root`, and `rootMargin`.
+- Pluggable transport layer.
+- Default transport uses `navigator.sendBeacon`, then falls back to `fetch` and `XMLHttpRequest`.
+- TypeScript declarations included.
+- Vite based demo and library build.
+
+## Installation
+
+```bash
+pnpm add vue3-track-plush
 ```
 
-or
+```bash
+npm install vue3-track-plush
+```
 
-```npm
+```bash
 yarn add vue3-track-plush
 ```
 
-## 插件注册
+## Quick Start
 
 ```ts
-// main.ts
 import { createApp } from 'vue';
 import App from './App.vue';
 import Vue3TrackPlush from 'vue3-track-plush';
@@ -23,109 +40,247 @@ import Vue3TrackPlush from 'vue3-track-plush';
 const app = createApp(App);
 
 app.use(Vue3TrackPlush, {
-  baseURL: '<接口域名>',
-  url: '<接口地址>',
-  projectName: '项目名称',
-  exposureThreshold: 0.5,
-  exposureDuration: 0,
-  exposureOnce: true,
+  baseURL: 'https://example.com',
+  url: '/api/track',
+  projectName: 'example-app',
 });
 
 app.mount('#app');
 ```
 
-## 指令埋点
+## Directive Usage
 
-```html
-<!-- 推荐：通过指令 value 传递参数 -->
-<div class="example" v-track:browse="{ name: 'testName', pageName: 'pageName' }">
-  <button v-track:click="{ buttonName: '指令点击上报(参数是对象)' }">
-    指令点击上报（参数是对象）
-  </button>
-</div>
+Use the directive argument to choose the event type.
 
-<!-- 兼容：继续支持 track-params 属性 -->
-<div class="example" v-track:browse track-params="example">
-  <button v-track:click track-params="指令点击上报(参数是字符串)">
-    指令点击上报（参数是字符串）
-  </button>
-</div>
+```vue
+<template>
+  <section v-track:browse="{ pageName: 'Home' }">
+    <button v-track:click="{ buttonName: 'Create order' }">
+      Create order
+    </button>
+  </section>
+</template>
+```
 
-<!-- 曝光埋点：元素进入视口达到 exposureThreshold 后上报一次 -->
-<div v-track:exposure="{ exposureName: '曝光区域', moduleName: 'banner' }">
-  曝光埋点区域
-</div>
+### Click Tracking
 
-<!-- 曝光参数可覆盖全局配置 -->
-<div v-track:exposure="{ exposureName: '停留曝光区域', duration: 1000, once: true, threshold: 0.75 }">
-  可见 1 秒后上报
+```vue
+<button v-track:click="{ buttonName: 'Save', moduleName: 'profile' }">
+  Save
+</button>
+```
+
+String values are mapped to `buttonName`.
+
+```vue
+<button v-track:click="'Save profile'">Save</button>
+```
+
+### Browse Tracking
+
+Browse events are reported when the bound element is mounted.
+
+```vue
+<section v-track:browse="{ pageName: 'Product detail', productId: '10001' }">
+  Product detail
+</section>
+```
+
+String values are mapped to `pageName`.
+
+```vue
+<section v-track:browse="'Product detail'">Product detail</section>
+```
+
+### Exposure Tracking
+
+Exposure events are reported when the element enters the viewport and matches the configured exposure options.
+
+```vue
+<div v-track:exposure="{ exposureName: 'Hero banner', moduleName: 'home' }">
+  Hero banner
 </div>
 ```
 
-## 手动埋点
+Per-element exposure options can override global options.
+
+```vue
+<div
+  v-track:exposure="{
+    exposureName: 'Pricing card',
+    threshold: 0.75,
+    duration: 1000,
+    once: true
+  }"
+>
+  Pricing card
+</div>
+```
+
+### Legacy `track-params`
+
+The plugin still supports the previous `track-params` syntax for compatibility.
+
+```vue
+<button v-track:click track-params="Legacy button">Legacy button</button>
+
+<button
+  v-track:click
+  :track-params="{ buttonName: 'Legacy object button', moduleName: 'legacy' }"
+>
+  Legacy object button
+</button>
+```
+
+## Manual Reporting
 
 ```ts
 import { browseEvent, clickEvent, exposureEvent } from 'vue3-track-plush';
 
-const customClickReport = () => {
-  clickEvent({
-    baseURL: '<接口域名>',
-    url: '<接口地址>',
-    projectName: '测试开发',
-    buttonName: '按钮名称',
-    param1: '参数1',
-  });
-};
+clickEvent({
+  baseURL: 'https://example.com',
+  url: '/api/track',
+  projectName: 'example-app',
+  buttonName: 'Create order',
+  moduleName: 'order',
+});
 
-const customBrowseReport = () => {
-  browseEvent({
-    baseURL: '<接口域名>',
-    url: '<接口地址>',
-    projectName: '测试开发',
-    pageName: '页面名称',
-    param1: '参数1',
-  });
-};
+browseEvent({
+  baseURL: 'https://example.com',
+  url: '/api/track',
+  projectName: 'example-app',
+  pageName: 'Order detail',
+  orderId: '10001',
+});
 
-const customExposureReport = () => {
-  exposureEvent({
-    baseURL: '<接口域名>',
-    url: '<接口地址>',
-    projectName: '测试开发',
-    exposureName: '曝光区域名称',
-    param1: '参数1',
-  });
-};
-```
-
-## 自定义上报
-
-默认上报优先使用 `navigator.sendBeacon`，然后回退到 `fetch` / `XMLHttpRequest`。如需完全接管请求，可以传入 `transport`。
-
-```ts
-app.use(Vue3TrackPlush, {
-  baseURL: '<接口域名>',
-  url: '<接口地址>',
-  projectName: '项目名称',
-  transport: {
-    send(requestConfig) {
-      // requestConfig.data 是最终埋点数据
-      return fetch(`${requestConfig.baseURL}${requestConfig.url}`, {
-        method: requestConfig.method || 'POST',
-        headers: {
-          'Content-Type': 'application/json;charset=UTF-8',
-        },
-        body: JSON.stringify(requestConfig.data),
-      });
-    },
-  },
+exposureEvent({
+  baseURL: 'https://example.com',
+  url: '/api/track',
+  projectName: 'example-app',
+  exposureName: 'Promotion banner',
+  moduleName: 'home',
 });
 ```
 
-## 开发
+## Configuration
+
+```ts
+app.use(Vue3TrackPlush, {
+  baseURL: 'https://example.com',
+  url: '/api/track',
+  projectName: 'example-app',
+  method: 'POST',
+  pageUrl: window.location.href,
+  userAgent: navigator.userAgent,
+  exposureThreshold: 0.5,
+  exposureDuration: 0,
+  exposureOnce: true,
+  exposureRoot: null,
+  exposureRootMargin: '0px',
+});
+```
+
+| Option | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `baseURL` | `string` | Yes | - | API origin or base path. |
+| `url` | `string` | Yes | - | Tracking endpoint path. |
+| `projectName` | `string` | Yes | - | Project identifier sent with every event. |
+| `method` | `'GET' \| 'POST'` | No | `'POST'` | Request method. |
+| `pageUrl` | `string` | No | `window.location.href` | Page URL override. |
+| `userAgent` | `string` | No | `navigator.userAgent` | User agent override. |
+| `exposureThreshold` | `number` | No | `0.5` | Default visible ratio for exposure tracking. |
+| `exposureDuration` | `number` | No | `0` | Default visible duration in milliseconds before reporting exposure. |
+| `exposureOnce` | `boolean` | No | `true` | Whether an exposure element should report only once. |
+| `exposureRoot` | `Element \| Document \| null` | No | `null` | Default `IntersectionObserver` root. |
+| `exposureRootMargin` | `string` | No | `'0px'` | Default `IntersectionObserver` root margin. |
+| `transport` | `TrackTransport` | No | built-in transport | Custom reporting transport. |
+
+## Event Payload
+
+Every event includes the base context fields and any custom parameters you pass.
+
+```ts
+{
+  userAgent: string;
+  pageUrl: string;
+  projectName: string;
+  actionType: '点击事件' | '浏览事件' | '曝光事件';
+  buttonName?: string;
+  pageName?: string;
+  exposureName?: string;
+  [key: string]: unknown;
+}
+```
+
+## Custom Transport
+
+Use a custom transport when you need to integrate with an existing request client, add signatures, or change retry behavior.
+
+```ts
+import Vue3TrackPlush, { type TrackTransport } from 'vue3-track-plush';
+
+const transport: TrackTransport = {
+  send(requestConfig) {
+    return fetch(`${requestConfig.baseURL}${requestConfig.url}`, {
+      method: requestConfig.method || 'POST',
+      headers: {
+        'Content-Type': 'application/json;charset=UTF-8',
+      },
+      body: JSON.stringify(requestConfig.data),
+      credentials: 'include',
+      keepalive: true,
+    });
+  },
+};
+
+app.use(Vue3TrackPlush, {
+  baseURL: 'https://example.com',
+  url: '/api/track',
+  projectName: 'example-app',
+  transport,
+});
+```
+
+## Demo
+
+The repository includes a Vite demo with route-based cases:
+
+- Basic directive tracking.
+- Legacy `track-params` compatibility.
+- Exposure tracking options.
+- Manual reporting APIs.
 
 ```bash
 pnpm install
 pnpm dev
+```
+
+## Build
+
+```bash
 pnpm build
 ```
+
+The build outputs:
+
+- `dist/vue3-track-plush.esm.js`
+- `dist/vue3-track-plush.umd.js`
+- `types/vue3-track-plush.d.ts`
+
+## Development
+
+```bash
+pnpm install
+pnpm dev
+pnpm typecheck
+pnpm build
+```
+
+## Browser Support
+
+Exposure tracking uses `IntersectionObserver`. If `IntersectionObserver` is not available, exposure events are reported immediately when the directive is mounted.
+
+## License
+
+MIT
+
