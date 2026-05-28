@@ -26,8 +26,13 @@ interface TrackPlushConfig extends Record<string, unknown> {
     exposureDuration?: number;
     exposureRoot?: Element | Document | null;
     exposureRootMargin?: string;
+    exposureQueueMaxSize?: number;
+    exposureQueueFlushInterval?: number;
+    exposureQueueStorageKey?: string;
+    exposureQueueStorage?: Storage;
     transport?: TrackTransport;
 }
+type TrackPayloadData = TrackPayload | TrackPayload[];
 interface TrackPayload extends Record<string, unknown> {
     buttonName?: string;
     exposureName?: string;
@@ -41,7 +46,7 @@ interface RequestConfig {
     baseURL: string;
     url: string;
     method?: TrackMethod;
-    data: TrackPayload;
+    data: TrackPayloadData;
 }
 interface TrackTransport {
     send: (requestConfig: RequestConfig) => Promise<void> | void;
@@ -68,4 +73,4 @@ declare const _default: {
 };
 
 export { browseEvent, clickEvent, _default as default, exposureEvent, install as vue3TrackPlush };
-export type { Cleanup, DirectiveTrackEntry, ExposureOptions, RequestConfig, TrackEntry, TrackEventType, TrackMethod, TrackParamsValue, TrackPayload, TrackPlushConfig, TrackTransport };
+export type { Cleanup, DirectiveTrackEntry, ExposureOptions, RequestConfig, TrackEntry, TrackEventType, TrackMethod, TrackParamsValue, TrackPayload, TrackPayloadData, TrackPlushConfig, TrackTransport };

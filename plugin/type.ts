@@ -31,8 +31,14 @@ export interface TrackPlushConfig extends Record<string, unknown> {
   exposureDuration?: number;
   exposureRoot?: Element | Document | null;
   exposureRootMargin?: string;
+  exposureQueueMaxSize?: number;
+  exposureQueueFlushInterval?: number;
+  exposureQueueStorageKey?: string;
+  exposureQueueStorage?: Storage;
   transport?: TrackTransport;
 }
+
+export type TrackPayloadData = TrackPayload | TrackPayload[];
 
 export interface TrackPayload extends Record<string, unknown> {
   buttonName?: string;
@@ -48,7 +54,7 @@ export interface RequestConfig {
   baseURL: string;
   url: string;
   method?: TrackMethod;
-  data: TrackPayload;
+  data: TrackPayloadData;
 }
 
 export interface TrackTransport {

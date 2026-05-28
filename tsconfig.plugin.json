@@ -10,6 +10,7 @@
   "files": [
     "plugin/index.ts",
     "plugin/core/event.ts",
+    "plugin/core/exposure-queue.ts",
     "plugin/core/tracker.ts",
     "plugin/directive/browse.ts",
     "plugin/directive/cleanup.ts",

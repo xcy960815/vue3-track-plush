@@ -15,6 +15,7 @@ export type {
   TrackMethod,
   TrackParamsValue,
   TrackPayload,
+  TrackPayloadData,
   TrackPlushConfig,
   TrackTransport,
 } from './type';

@@ -11,6 +11,7 @@
 - 支持手动 API：`clickEvent`、`browseEvent`、`exposureEvent`。
 - 曝光埋点基于 `IntersectionObserver`。
 - 曝光参数可配置：`threshold`、`duration`、`once`、`root`、`rootMargin`。
+- 曝光队列支持数量触发、定时触发、本地缓存和页面离开兜底上报。
 - 支持自定义上报 transport。
 - 默认上报优先使用 `navigator.sendBeacon`，然后回退到 `fetch` 和 `XMLHttpRequest`。
 - 内置 TypeScript 类型声明。
@@ -177,6 +178,9 @@ app.use(Vue3TrackPlush, {
   exposureOnce: true,
   exposureRoot: null,
   exposureRootMargin: '0px',
+  exposureQueueMaxSize: 20,
+  exposureQueueFlushInterval: 2000,
+  exposureQueueStorageKey: 'vue3-track-plush:exposure-queue',
 });
 ```
 
@@ -193,6 +197,10 @@ app.use(Vue3TrackPlush, {
 | `exposureOnce` | `boolean` | 否 | `true` | 曝光元素是否只上报一次。 |
 | `exposureRoot` | `Element \| Document \| null` | 否 | `null` | 默认 `IntersectionObserver` root。 |
 | `exposureRootMargin` | `string` | 否 | `'0px'` | 默认 `IntersectionObserver` rootMargin。 |
+| `exposureQueueMaxSize` | `number` | 否 | `20` | 曝光队列达到该数量后立即上报。 |
+| `exposureQueueFlushInterval` | `number` | 否 | `2000` | 曝光队列定时上报间隔，单位毫秒。 |
+| `exposureQueueStorageKey` | `string` | 否 | `'vue3-track-plush:exposure-queue'` | 待上报曝光数据的本地缓存 key。 |
+| `exposureQueueStorage` | `Storage` | 否 | `window.localStorage` | 待上报曝光数据的自定义缓存。 |
 | `transport` | `TrackTransport` | 否 | 内置 transport | 自定义上报实现。 |
 
 ## 上报数据
@@ -210,6 +218,12 @@ app.use(Vue3TrackPlush, {
   exposureName?: string;
   [key: string]: unknown;
 }
+```
+
+点击和浏览事件会立即上报。曝光事件会先进入队列，再批量上报。因此自定义 transport 里的 `requestConfig.data` 可能是单条 payload，也可能是 payload 数组。
+
+```ts
+type RequestData = TrackPayload | TrackPayload[];
 ```
 
 ## 自定义上报
@@ -283,4 +297,3 @@ pnpm build
 ## License
 
 MIT
-

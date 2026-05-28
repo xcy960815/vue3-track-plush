@@ -26,7 +26,75 @@ var e = "POST", t = (e) => {
 	t(a);
 	let o = n(a), s = (a.method || e).toUpperCase();
 	s === "POST" && r(o, a.data) || i(o, s, a.data);
-} }, s = {
+} }, s = 20, c = 2e3, l = "vue3-track-plush:exposure-queue", u = () => typeof window < "u", d = (e) => {
+	if (e.exposureQueueStorage) return e.exposureQueueStorage;
+	if (u()) try {
+		return window.localStorage;
+	} catch {
+		return;
+	}
+}, f = class {
+	constructor(e) {
+		this.queue = [], this.timer = null, this.attachedLifecycleFlush = !1, this.config = e.config, this.transport = e.transport, this.maxSize = this.resolvePositiveNumber(this.config.exposureQueueMaxSize, s), this.flushInterval = this.resolvePositiveNumber(this.config.exposureQueueFlushInterval, c), this.storageKey = this.config.exposureQueueStorageKey || l, this.storage = d(this.config), this.restoreFromStorage(), this.attachLifecycleFlush();
+	}
+	push(e) {
+		if (this.queue.push(e), this.persist(), this.queue.length >= this.maxSize) {
+			this.flush();
+			return;
+		}
+		this.scheduleFlush();
+	}
+	flush() {
+		if (!this.queue.length) return;
+		this.clearTimer();
+		let e = this.queue.splice(0, this.maxSize);
+		this.persist(), this.transport.send({
+			baseURL: this.config.baseURL,
+			url: this.config.url,
+			method: this.config.method,
+			data: e
+		}), this.queue.length && this.scheduleFlush();
+	}
+	scheduleFlush() {
+		this.timer ||= setTimeout(() => {
+			this.flush();
+		}, this.flushInterval);
+	}
+	clearTimer() {
+		this.timer &&= (clearTimeout(this.timer), null);
+	}
+	persist() {
+		if (this.storage) {
+			if (!this.queue.length) {
+				this.storage.removeItem(this.storageKey);
+				return;
+			}
+			this.storage.setItem(this.storageKey, JSON.stringify(this.queue));
+		}
+	}
+	restoreFromStorage() {
+		if (!this.storage) return;
+		let e = this.storage.getItem(this.storageKey);
+		if (e) try {
+			let t = JSON.parse(e);
+			Array.isArray(t) && this.queue.push(...t), this.persist(), this.scheduleFlush();
+		} catch {
+			this.storage.removeItem(this.storageKey);
+		}
+	}
+	attachLifecycleFlush() {
+		if (!u() || this.attachedLifecycleFlush) return;
+		let e = () => {
+			this.flush();
+		};
+		window.addEventListener("pagehide", e), document.addEventListener("visibilitychange", () => {
+			document.visibilityState === "hidden" && e();
+		}), this.attachedLifecycleFlush = !0;
+	}
+	resolvePositiveNumber(e, t) {
+		return typeof e != "number" || Number.isNaN(e) || e <= 0 ? t : e;
+	}
+}, p = {
 	click: {
 		type: "click",
 		meta: {
@@ -48,18 +116,22 @@ var e = "POST", t = (e) => {
 			stringParamKey: "exposureName"
 		}
 	}
-}, c = (e) => s[e], l = class {
+}, m = (e) => p[e], h = class {
 	constructor(e) {
 		this.config = e, this.transport = e.transport || o;
 	}
 	track(e, t = {}) {
-		let n = c(e), r = {
+		let n = m(e), r = {
 			userAgent: this.config.userAgent || navigator.userAgent,
 			pageUrl: this.config.pageUrl || window.location.href,
 			projectName: this.config.projectName,
 			actionType: n.meta.actionType,
 			...t
 		};
+		if (e === "exposure") {
+			this.getExposureQueue().push(r);
+			return;
+		}
 		this.transport.send({
 			baseURL: this.config.baseURL,
 			url: this.config.url,
@@ -67,7 +139,13 @@ var e = "POST", t = (e) => {
 			data: r
 		});
 	}
-}, u = new Set([
+	getExposureQueue() {
+		return this.exposureQueue ||= new f({
+			config: this.config,
+			transport: this.transport
+		}), this.exposureQueue;
+	}
+}, g = new Set([
 	"baseURL",
 	"exposureDuration",
 	"exposureOnce",
@@ -78,45 +156,45 @@ var e = "POST", t = (e) => {
 	"transport",
 	"type",
 	"url"
-]), d = (e, t) => typeof t == "string" ? { [c(e).meta.stringParamKey]: t } : t || {}, f = (e, t) => {
+]), _ = (e, t) => typeof t == "string" ? { [m(e).meta.stringParamKey]: t } : t || {}, v = (e, t) => {
 	let n = t.binding.value;
-	if (n !== void 0) return d(e, n);
+	if (n !== void 0) return _(e, n);
 	let r = t.vnode.props;
-	return d(e, r?.["track-params"] || r?.trackParams);
-}, p = (e, t) => {
-	let n = d(e, t);
-	return Object.entries(n).reduce((e, [t, n]) => (u.has(t) || (e[t] = n), e), {});
-}, m = (e, t) => {
-	e.track("browse", f("browse", t));
-}, h = /* @__PURE__ */ new WeakMap(), g = (e, t) => {
-	let n = h.get(e) || [];
-	n.push(t), h.set(e, n);
-}, _ = (e) => {
-	let t = h.get(e);
-	t && (t.forEach((e) => e()), h.delete(e));
-}, v = (e, t) => {
+	return _(e, r?.["track-params"] || r?.trackParams);
+}, y = (e, t) => {
+	let n = _(e, t);
+	return Object.entries(n).reduce((e, [t, n]) => (g.has(t) || (e[t] = n), e), {});
+}, b = (e, t) => {
+	e.track("browse", v("browse", t));
+}, x = /* @__PURE__ */ new WeakMap(), S = (e, t) => {
+	let n = x.get(e) || [];
+	n.push(t), x.set(e, n);
+}, C = (e) => {
+	let t = x.get(e);
+	t && (t.forEach((e) => e()), x.delete(e));
+}, w = (e, t) => {
 	let n = () => {
-		e.track("click", f("click", t));
+		e.track("click", v("click", t));
 	};
-	t.el.addEventListener("click", n), g(t.el, () => {
+	t.el.addEventListener("click", n), S(t.el, () => {
 		t.el.removeEventListener("click", n);
 	});
-}, y = .5, b = (e) => {
+}, T = .5, E = (e) => {
 	if (!(typeof e != "number" || Number.isNaN(e))) return e;
-}, x = (e) => Math.min(Math.max(e, 0), 1), S = (e, t) => {
-	let n = b(t.exposureThreshold) || b(t.threshold) || e.exposureThreshold || y, r = b(t.exposureDuration) || b(t.duration) || e.exposureDuration || 0;
+}, D = (e) => Math.min(Math.max(e, 0), 1), O = (e, t) => {
+	let n = E(t.exposureThreshold) || E(t.threshold) || e.exposureThreshold || T, r = E(t.exposureDuration) || E(t.duration) || e.exposureDuration || 0;
 	return {
 		once: typeof t.once == "boolean" ? t.once : e.exposureOnce !== !1,
-		threshold: x(n),
+		threshold: D(n),
 		duration: Math.max(r, 0),
 		root: t.root || e.exposureRoot || null,
 		rootMargin: typeof t.rootMargin == "string" ? t.rootMargin : e.exposureRootMargin || "0px"
 	};
-}, C = (e) => {
+}, k = (e) => {
 	let { duration: t, exposureDuration: n, exposureRoot: r, exposureRootMargin: i, exposureThreshold: a, once: o, root: s, rootMargin: c, threshold: l, ...u } = e;
 	return u;
-}, w = (e, t, n) => {
-	let r = f("exposure", t), i = S(n, r), a = C(r), o = !1, s = null, c = () => {
+}, A = (e, t, n) => {
+	let r = v("exposure", t), i = O(n, r), a = k(r), o = !1, s = null, c = () => {
 		s &&= (clearTimeout(s), null);
 	}, l = () => {
 		i.once && o || (o = !0, e.track("exposure", a));
@@ -144,15 +222,15 @@ var e = "POST", t = (e) => {
 		rootMargin: i.rootMargin,
 		threshold: i.threshold
 	});
-	u.observe(t.el), g(t.el, () => {
+	u.observe(t.el), S(t.el, () => {
 		c(), u.disconnect();
 	});
-}, T = [
+}, j = [
 	"click",
 	"browse",
 	"exposure"
-], E = (e) => e ? e.split("|").map((e) => e.trim()).filter((e) => T.includes(e)) : [], D = (e) => {
-	let t = new l(e);
+], M = (e) => e ? e.split("|").map((e) => e.trim()).filter((e) => j.includes(e)) : [], N = (e) => {
+	let t = new h(e);
 	return {
 		mounted(n, r, i) {
 			let a = {
@@ -160,22 +238,22 @@ var e = "POST", t = (e) => {
 				binding: r,
 				vnode: i
 			};
-			E(r.arg).forEach((n) => {
-				n === "click" && v(t, a), n === "browse" && m(t, a), n === "exposure" && w(t, a, e);
+			M(r.arg).forEach((n) => {
+				n === "click" && w(t, a), n === "browse" && b(t, a), n === "exposure" && A(t, a, e);
 			});
 		},
 		unmounted(e) {
-			_(e);
+			C(e);
 		}
 	};
-}, O = (e, t) => {
-	e.directive("track", D(t));
-}, k = (e) => {
-	new l(e).track("click", p("click", e));
-}, A = (e) => {
-	new l(e).track("browse", p("browse", e));
-}, j = (e) => {
-	new l(e).track("exposure", p("exposure", e));
-}, M = { install: O };
+}, P = (e, t) => {
+	e.directive("track", N(t));
+}, F = (e) => {
+	new h(e).track("click", y("click", e));
+}, I = (e) => {
+	new h(e).track("browse", y("browse", e));
+}, L = (e) => {
+	new h(e).track("exposure", y("exposure", e));
+}, R = { install: P };
 //#endregion
-export { A as browseEvent, k as clickEvent, M as default, j as exposureEvent, O as vue3TrackPlush };
+export { I as browseEvent, F as clickEvent, R as default, L as exposureEvent, P as vue3TrackPlush };

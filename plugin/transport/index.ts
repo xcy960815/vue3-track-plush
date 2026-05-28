@@ -1,4 +1,4 @@
-import type { RequestConfig, TrackMethod, TrackTransport } from '../type';
+import type { RequestConfig, TrackMethod, TrackPayloadData, TrackTransport } from '../type';
 
 const DEFAULT_METHOD: TrackMethod = 'POST';
 
@@ -12,7 +12,7 @@ const createRequestUrl = (requestConfig: RequestConfig): string => {
   return `${requestConfig.baseURL}${requestConfig.url}`;
 };
 
-const sendByBeacon = (url: string, data: Record<string, unknown>): boolean => {
+const sendByBeacon = (url: string, data: TrackPayloadData): boolean => {
   if (typeof navigator === 'undefined' || typeof navigator.sendBeacon !== 'function') return false;
 
   const blob = new Blob([JSON.stringify(data)], {
@@ -22,7 +22,7 @@ const sendByBeacon = (url: string, data: Record<string, unknown>): boolean => {
   return navigator.sendBeacon(url, blob);
 };
 
-const sendByFetch = (url: string, method: TrackMethod, data: Record<string, unknown>): void => {
+const sendByFetch = (url: string, method: TrackMethod, data: TrackPayloadData): void => {
   if (typeof fetch !== 'function') {
     sendByXhr(url, method, data);
     return;
@@ -41,7 +41,7 @@ const sendByFetch = (url: string, method: TrackMethod, data: Record<string, unkn
   });
 };
 
-const sendByXhr = (url: string, method: TrackMethod, data: Record<string, unknown>): void => {
+const sendByXhr = (url: string, method: TrackMethod, data: TrackPayloadData): void => {
   const xhr = new XMLHttpRequest();
 
   xhr.timeout = 10000;
@@ -63,4 +63,3 @@ export const defaultTransport: TrackTransport = {
     sendByFetch(url, method, requestConfig.data);
   },
 };
-

@@ -11,6 +11,7 @@ A lightweight Vue 3 tracking plugin based on custom directives. It supports page
 - Manual APIs: `clickEvent`, `browseEvent`, and `exposureEvent`.
 - Exposure tracking based on `IntersectionObserver`.
 - Configurable exposure options: `threshold`, `duration`, `once`, `root`, and `rootMargin`.
+- Exposure queue with batch flush, interval flush, local storage cache, and page-leave flush.
 - Pluggable transport layer.
 - Default transport uses `navigator.sendBeacon`, then falls back to `fetch` and `XMLHttpRequest`.
 - TypeScript declarations included.
@@ -177,6 +178,9 @@ app.use(Vue3TrackPlush, {
   exposureOnce: true,
   exposureRoot: null,
   exposureRootMargin: '0px',
+  exposureQueueMaxSize: 20,
+  exposureQueueFlushInterval: 2000,
+  exposureQueueStorageKey: 'vue3-track-plush:exposure-queue',
 });
 ```
 
@@ -193,6 +197,10 @@ app.use(Vue3TrackPlush, {
 | `exposureOnce` | `boolean` | No | `true` | Whether an exposure element should report only once. |
 | `exposureRoot` | `Element \| Document \| null` | No | `null` | Default `IntersectionObserver` root. |
 | `exposureRootMargin` | `string` | No | `'0px'` | Default `IntersectionObserver` root margin. |
+| `exposureQueueMaxSize` | `number` | No | `20` | Maximum queued exposure events before an immediate flush. |
+| `exposureQueueFlushInterval` | `number` | No | `2000` | Exposure queue flush interval in milliseconds. |
+| `exposureQueueStorageKey` | `string` | No | `'vue3-track-plush:exposure-queue'` | Local storage key for pending exposure events. |
+| `exposureQueueStorage` | `Storage` | No | `window.localStorage` | Custom storage for pending exposure events. |
 | `transport` | `TrackTransport` | No | built-in transport | Custom reporting transport. |
 
 ## Event Payload
@@ -210,6 +218,12 @@ Every event includes the base context fields and any custom parameters you pass.
   exposureName?: string;
   [key: string]: unknown;
 }
+```
+
+Click and browse events are sent immediately. Exposure events are queued and flushed as a batch. Therefore `requestConfig.data` in a custom transport may be either a single payload or an array of payloads.
+
+```ts
+type RequestData = TrackPayload | TrackPayload[];
 ```
 
 ## Custom Transport
@@ -283,4 +297,3 @@ Exposure tracking uses `IntersectionObserver`. If `IntersectionObserver` is not 
 ## License
 
 MIT
-
