@@ -2,22 +2,24 @@
   "compilerOptions": {
     "isolatedModules": true,
     "skipLibCheck": true,
-    "baseUrl": ".",
     "module": "esnext",
+    "moduleResolution": "bundler",
     "noImplicitAny": false,
     "removeComments": true,
-    "moduleResolution": "node",
     "esModuleInterop": true,
     "jsx": "preserve",
     "noLib": false,
-    "target": "es5",
+    "target": "ES2015",
     "lib": [
       "ESNext",
       "DOM"
     ],
     "paths": {
       "@/*": [
-        "src/*"
+        "./src/*"
+      ],
+      "@plugin/*": [
+        "./plugin/*"
       ]
     },
     "allowSyntheticDefaultImports": true,
@@ -26,11 +28,24 @@
     "resolveJsonModule": true,
     "declaration": true,
     "declarationDir": "./temp",
+    "noEmit": true
   },
   "include": [
-    "src/*"
+    "src/**/*.ts",
+    "src/**/*.vue"
   ],
   "exclude": [
-    "./temp"
+    "./temp",
+    "dist"
+  ],
+  "files": [
+    "plugin/index.ts",
+    "plugin/browse.ts",
+    "plugin/click.ts",
+    "plugin/exposure.ts",
+    "plugin/fetch.ts",
+    "plugin/type.ts",
+    "plugin/utils.ts",
+    "src/shims-vue.d.ts"
   ]
 }

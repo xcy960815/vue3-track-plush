@@ -1,0 +1,19 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "noEmit": false,
+    "emitDeclarationOnly": true,
+    "declaration": true,
+    "declarationDir": "./temp"
+  },
+  "include": [],
+  "files": [
+    "plugin/index.ts",
+    "plugin/browse.ts",
+    "plugin/click.ts",
+    "plugin/exposure.ts",
+    "plugin/fetch.ts",
+    "plugin/type.ts",
+    "plugin/utils.ts"
+  ]
+}
