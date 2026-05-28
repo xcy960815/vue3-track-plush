@@ -1,13 +1,15 @@
 //#region plugin/transport/index.ts
 var e = "POST", t = (e) => {
 	if (!e.baseURL || !e.url) throw Error("baseURL 或 url 不能为空");
-}, n = (e) => `${e.baseURL}${e.url}`, r = (e, t) => {
+}, n = (e) => `${e.baseURL}${e.url}`, r = (e) => {
+	console.log("[vue3-track-plush debug]", JSON.stringify(e.data, null, 2));
+}, i = (e, t) => {
 	if (typeof navigator > "u" || typeof navigator.sendBeacon != "function") return !1;
 	let n = new Blob([JSON.stringify(t)], { type: "application/json;charset=UTF-8" });
 	return navigator.sendBeacon(e, n);
-}, i = (e, t, n) => {
+}, a = (e, t, n) => {
 	if (typeof fetch != "function") {
-		a(e, t, n);
+		o(e, t, n);
 		return;
 	}
 	fetch(e, {
@@ -17,25 +19,28 @@ var e = "POST", t = (e) => {
 		body: JSON.stringify(n),
 		keepalive: !0
 	}).catch(() => {
-		a(e, t, n);
+		o(e, t, n);
 	});
-}, a = (e, t, n) => {
+}, o = (e, t, n) => {
 	let r = new XMLHttpRequest();
 	r.timeout = 1e4, r.open(t, e, !0), r.withCredentials = !0, r.setRequestHeader("Content-type", "application/json;charset=UTF-8"), r.send(JSON.stringify(n || {}));
-}, o = { send(a) {
-	t(a);
-	let o = n(a), s = (a.method || e).toUpperCase();
-	s === "POST" && r(o, a.data) || i(o, s, a.data);
-} }, s = 20, c = 2e3, l = "vue3-track-plush:exposure-queue", u = () => typeof window < "u", d = (e) => {
+}, s = { send(o) {
+	if (t(o), o.debug) {
+		r(o);
+		return;
+	}
+	let s = n(o), c = (o.method || e).toUpperCase();
+	c === "POST" && i(s, o.data) || a(s, c, o.data);
+} }, c = 20, l = 2e3, u = "vue3-track-plush:exposure-queue", d = () => typeof window < "u", f = (e) => {
 	if (e.exposureQueueStorage) return e.exposureQueueStorage;
-	if (u()) try {
+	if (d()) try {
 		return window.localStorage;
 	} catch {
 		return;
 	}
-}, f = class {
+}, p = class {
 	constructor(e) {
-		this.queue = [], this.timer = null, this.attachedLifecycleFlush = !1, this.config = e.config, this.transport = e.transport, this.maxSize = this.resolvePositiveNumber(this.config.exposureQueueMaxSize, s), this.flushInterval = this.resolvePositiveNumber(this.config.exposureQueueFlushInterval, c), this.storageKey = this.config.exposureQueueStorageKey || l, this.storage = d(this.config), this.restoreFromStorage(), this.attachLifecycleFlush();
+		this.queue = [], this.timer = null, this.attachedLifecycleFlush = !1, this.config = e.config, this.transport = e.transport, this.maxSize = this.resolvePositiveNumber(this.config.exposureQueueMaxSize, c), this.flushInterval = this.resolvePositiveNumber(this.config.exposureQueueFlushInterval, l), this.storageKey = this.config.exposureQueueStorageKey || u, this.storage = f(this.config), this.restoreFromStorage(), this.attachLifecycleFlush();
 	}
 	push(e) {
 		if (this.queue.push(e), this.persist(), this.queue.length >= this.maxSize) {
@@ -52,6 +57,7 @@ var e = "POST", t = (e) => {
 			baseURL: this.config.baseURL,
 			url: this.config.url,
 			method: this.config.method,
+			debug: this.config.debug,
 			data: e
 		}), this.queue.length && this.scheduleFlush();
 	}
@@ -83,7 +89,7 @@ var e = "POST", t = (e) => {
 		}
 	}
 	attachLifecycleFlush() {
-		if (!u() || this.attachedLifecycleFlush) return;
+		if (!d() || this.attachedLifecycleFlush) return;
 		let e = () => {
 			this.flush();
 		};
@@ -94,7 +100,7 @@ var e = "POST", t = (e) => {
 	resolvePositiveNumber(e, t) {
 		return typeof e != "number" || Number.isNaN(e) || e <= 0 ? t : e;
 	}
-}, p = {
+}, m = {
 	click: {
 		type: "click",
 		meta: {
@@ -116,12 +122,12 @@ var e = "POST", t = (e) => {
 			stringParamKey: "exposureName"
 		}
 	}
-}, m = (e) => p[e], h = class {
+}, h = (e) => m[e], g = class {
 	constructor(e) {
-		this.config = e, this.transport = e.transport || o;
+		this.config = e, this.transport = e.transport || s;
 	}
 	track(e, t = {}) {
-		let n = m(e), r = {
+		let n = h(e), r = {
 			userAgent: this.config.userAgent || navigator.userAgent,
 			pageUrl: this.config.pageUrl || window.location.href,
 			projectName: this.config.projectName,
@@ -136,16 +142,17 @@ var e = "POST", t = (e) => {
 			baseURL: this.config.baseURL,
 			url: this.config.url,
 			method: this.config.method,
+			debug: this.config.debug,
 			data: r
 		});
 	}
 	getExposureQueue() {
-		return this.exposureQueue ||= new f({
+		return this.exposureQueue ||= new p({
 			config: this.config,
 			transport: this.transport
 		}), this.exposureQueue;
 	}
-}, g = new Set([
+}, _ = new Set([
 	"baseURL",
 	"exposureDuration",
 	"exposureOnce",
@@ -156,45 +163,45 @@ var e = "POST", t = (e) => {
 	"transport",
 	"type",
 	"url"
-]), _ = (e, t) => typeof t == "string" ? { [m(e).meta.stringParamKey]: t } : t || {}, v = (e, t) => {
+]), v = (e, t) => typeof t == "string" ? { [h(e).meta.stringParamKey]: t } : t || {}, y = (e, t) => {
 	let n = t.binding.value;
-	if (n !== void 0) return _(e, n);
+	if (n !== void 0) return v(e, n);
 	let r = t.vnode.props;
-	return _(e, r?.["track-params"] || r?.trackParams);
-}, y = (e, t) => {
-	let n = _(e, t);
-	return Object.entries(n).reduce((e, [t, n]) => (g.has(t) || (e[t] = n), e), {});
+	return v(e, r?.["track-params"] || r?.trackParams);
 }, b = (e, t) => {
-	e.track("browse", v("browse", t));
-}, x = /* @__PURE__ */ new WeakMap(), S = (e, t) => {
-	let n = x.get(e) || [];
-	n.push(t), x.set(e, n);
-}, C = (e) => {
-	let t = x.get(e);
-	t && (t.forEach((e) => e()), x.delete(e));
-}, w = (e, t) => {
+	let n = v(e, t);
+	return Object.entries(n).reduce((e, [t, n]) => (_.has(t) || (e[t] = n), e), {});
+}, x = (e, t) => {
+	e.track("browse", y("browse", t));
+}, S = /* @__PURE__ */ new WeakMap(), C = (e, t) => {
+	let n = S.get(e) || [];
+	n.push(t), S.set(e, n);
+}, w = (e) => {
+	let t = S.get(e);
+	t && (t.forEach((e) => e()), S.delete(e));
+}, T = (e, t) => {
 	let n = () => {
-		e.track("click", v("click", t));
+		e.track("click", y("click", t));
 	};
-	t.el.addEventListener("click", n), S(t.el, () => {
+	t.el.addEventListener("click", n), C(t.el, () => {
 		t.el.removeEventListener("click", n);
 	});
-}, T = .5, E = (e) => {
+}, E = .5, D = (e) => {
 	if (!(typeof e != "number" || Number.isNaN(e))) return e;
-}, D = (e) => Math.min(Math.max(e, 0), 1), O = (e, t) => {
-	let n = E(t.exposureThreshold) || E(t.threshold) || e.exposureThreshold || T, r = E(t.exposureDuration) || E(t.duration) || e.exposureDuration || 0;
+}, O = (e) => Math.min(Math.max(e, 0), 1), k = (e, t) => {
+	let n = D(t.exposureThreshold) || D(t.threshold) || e.exposureThreshold || E, r = D(t.exposureDuration) || D(t.duration) || e.exposureDuration || 0;
 	return {
 		once: typeof t.once == "boolean" ? t.once : e.exposureOnce !== !1,
-		threshold: D(n),
+		threshold: O(n),
 		duration: Math.max(r, 0),
 		root: t.root || e.exposureRoot || null,
 		rootMargin: typeof t.rootMargin == "string" ? t.rootMargin : e.exposureRootMargin || "0px"
 	};
-}, k = (e) => {
+}, A = (e) => {
 	let { duration: t, exposureDuration: n, exposureRoot: r, exposureRootMargin: i, exposureThreshold: a, once: o, root: s, rootMargin: c, threshold: l, ...u } = e;
 	return u;
-}, A = (e, t, n) => {
-	let r = v("exposure", t), i = O(n, r), a = k(r), o = !1, s = null, c = () => {
+}, j = (e, t, n) => {
+	let r = y("exposure", t), i = k(n, r), a = A(r), o = !1, s = null, c = () => {
 		s &&= (clearTimeout(s), null);
 	}, l = () => {
 		i.once && o || (o = !0, e.track("exposure", a));
@@ -222,15 +229,15 @@ var e = "POST", t = (e) => {
 		rootMargin: i.rootMargin,
 		threshold: i.threshold
 	});
-	u.observe(t.el), S(t.el, () => {
+	u.observe(t.el), C(t.el, () => {
 		c(), u.disconnect();
 	});
-}, j = [
+}, M = [
 	"click",
 	"browse",
 	"exposure"
-], M = (e) => e ? e.split("|").map((e) => e.trim()).filter((e) => j.includes(e)) : [], N = (e) => {
-	let t = new h(e);
+], N = (e) => e ? e.split("|").map((e) => e.trim()).filter((e) => M.includes(e)) : [], P = (e) => {
+	let t = new g(e);
 	return {
 		mounted(n, r, i) {
 			let a = {
@@ -238,22 +245,22 @@ var e = "POST", t = (e) => {
 				binding: r,
 				vnode: i
 			};
-			M(r.arg).forEach((n) => {
-				n === "click" && w(t, a), n === "browse" && b(t, a), n === "exposure" && A(t, a, e);
+			N(r.arg).forEach((n) => {
+				n === "click" && T(t, a), n === "browse" && x(t, a), n === "exposure" && j(t, a, e);
 			});
 		},
 		unmounted(e) {
-			C(e);
+			w(e);
 		}
 	};
-}, P = (e, t) => {
-	e.directive("track", N(t));
-}, F = (e) => {
-	new h(e).track("click", y("click", e));
+}, F = (e, t) => {
+	e.directive("track", P(t));
 }, I = (e) => {
-	new h(e).track("browse", y("browse", e));
+	new g(e).track("click", b("click", e));
 }, L = (e) => {
-	new h(e).track("exposure", y("exposure", e));
-}, R = { install: P };
+	new g(e).track("browse", b("browse", e));
+}, R = (e) => {
+	new g(e).track("exposure", b("exposure", e));
+}, z = { install: F };
 //#endregion
-export { I as browseEvent, F as clickEvent, R as default, L as exposureEvent, P as vue3TrackPlush };
+export { L as browseEvent, I as clickEvent, z as default, R as exposureEvent, F as vue3TrackPlush };
