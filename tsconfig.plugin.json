@@ -1,0 +1,24 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "noEmit": false,
+    "emitDeclarationOnly": true,
+    "declaration": true,
+    "declarationDir": "./temp"
+  },
+  "include": [],
+  "files": [
+    "plugin/index.ts",
+    "plugin/core/event.ts",
+    "plugin/core/exposure-queue.ts",
+    "plugin/core/tracker.ts",
+    "plugin/directive/browse.ts",
+    "plugin/directive/cleanup.ts",
+    "plugin/directive/click.ts",
+    "plugin/directive/exposure.ts",
+    "plugin/directive/index.ts",
+    "plugin/type.ts",
+    "plugin/transport/index.ts",
+    "plugin/utils/params.ts"
+  ]
+}

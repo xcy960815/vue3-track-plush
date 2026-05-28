@@ -5,13 +5,14 @@ node_modules
 /src
 .browserslistrc
 package-lock.json
-rollup.config.js
-api-extractor.json
-/example
+rollup.dts.config.mjs
+vite.config.ts
+vite.plugin.config.ts
 
-vue.config.js
+index.html
 
 tsconfig.json
+tsconfig.plugin.json
 
 # local env files
 .env.local

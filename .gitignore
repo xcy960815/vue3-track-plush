@@ -1,12 +1,9 @@
 .DS_Store
 node_modules
-/dist
+dist/
 /public
-/src
 .browserslistrc
 package-lock.json
-rollup.config.js
-api-extractor.json
 
 temp/
 
