@@ -1,72 +1,45 @@
 <template>
-  <main class="demo-page">
-    <section class="demo-panel" v-track:browse="{ pageName: '对象参数浏览', name: 'demo' }">
-      <h1>vue3-track-plush</h1>
-      <p>Vue 3 directive tracking plugin demo.</p>
-
-      <div class="actions">
-        <button v-track:click="{ buttonName: '对象参数点击' }">指令点击上报（对象）</button>
-        <button v-track:click track-params="字符串参数点击">指令点击上报（字符串）</button>
-        <button type="button" @click="customClickReport">自定义点击上报</button>
-        <button type="button" @click="customBrowseReport">自定义浏览上报</button>
-        <button type="button" @click="customExposureReport">自定义曝光上报</button>
+  <main class="demo-shell">
+    <aside class="demo-sidebar">
+      <div class="brand">
+        <h1>vue3-track-plush</h1>
+        <p>Route based tracking demo</p>
       </div>
 
-      <div class="scroll-area">
-        <div class="spacer">向下滚动查看曝光区域</div>
-        <div
-          class="exposure-box"
-          v-track:exposure="{ exposureName: 'Demo曝光区域', moduleName: 'scroll-area', duration: 300 }"
+      <nav class="nav-list" aria-label="Demo cases">
+        <RouterLink
+          v-for="routeItem in navRoutes"
+          :key="routeItem.path"
+          class="nav-link"
+          :to="routeItem.path"
         >
-          曝光埋点区域
-        </div>
-      </div>
+          <span>{{ routeItem.meta.title }}</span>
+          <small>{{ routeItem.meta.description }}</small>
+        </RouterLink>
+      </nav>
+    </aside>
+
+    <section class="demo-content">
+      <RouterView />
     </section>
   </main>
 </template>
 
 <script lang="ts" setup>
-import { browseEvent, clickEvent, exposureEvent } from '../plugin';
+import { RouterLink, RouterView } from 'vue-router';
 
-const requestConfig = {
-  baseURL: '/track-api',
-  url: '/action/record',
-  projectName: 'vue3-track-plush-demo',
-};
+import { caseRoutes } from './router';
 
-const customClickReport = () => {
-  clickEvent({
-    ...requestConfig,
-    buttonName: '自定义点击按钮',
-    source: 'demo',
-  });
-};
-
-const customBrowseReport = () => {
-  browseEvent({
-    ...requestConfig,
-    pageName: '自定义浏览页面',
-    source: 'demo',
-  });
-};
-
-const customExposureReport = () => {
-  exposureEvent({
-    ...requestConfig,
-    exposureName: '自定义曝光区域',
-    source: 'demo',
-  });
-};
+const navRoutes = caseRoutes;
 </script>
 
-<style scoped>
-.demo-page {
-  min-height: 100vh;
-  display: grid;
-  place-items: center;
-  margin: 0;
-  padding: 32px;
+<style>
+* {
   box-sizing: border-box;
+}
+
+body {
+  margin: 0;
   background: #f5f7fb;
   color: #1f2937;
   font-family:
@@ -77,32 +50,6 @@ const customExposureReport = () => {
     BlinkMacSystemFont,
     "Segoe UI",
     sans-serif;
-}
-
-.demo-panel {
-  width: min(720px, 100%);
-  padding: 32px;
-  border: 1px solid #d8dee9;
-  border-radius: 8px;
-  background: #ffffff;
-  box-shadow: 0 12px 36px rgb(15 23 42 / 8%);
-}
-
-h1 {
-  margin: 0 0 8px;
-  font-size: 28px;
-  line-height: 1.2;
-}
-
-p {
-  margin: 0 0 24px;
-  color: #667085;
-}
-
-.actions {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 12px;
 }
 
 button {
@@ -119,31 +66,77 @@ button {
 button:hover {
   background: #e0e7ff;
 }
+</style>
 
-.scroll-area {
-  height: 220px;
-  overflow-y: auto;
-  margin-top: 28px;
-  border: 1px solid #d8dee9;
-  border-radius: 8px;
-  background: #f8fafc;
+<style scoped>
+.demo-shell {
+  min-height: 100vh;
+  display: grid;
+  grid-template-columns: 300px minmax(0, 1fr);
 }
 
-.spacer {
-  height: 260px;
-  display: grid;
-  place-items: center;
-  color: #64748b;
+.demo-sidebar {
+  min-height: 100vh;
+  padding: 28px 20px;
+  border-right: 1px solid #d8dee9;
+  background: #ffffff;
 }
 
-.exposure-box {
-  min-height: 120px;
+.brand {
+  padding: 0 8px 20px;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.brand h1 {
+  margin: 0 0 8px;
+  font-size: 22px;
+  line-height: 1.2;
+}
+
+.brand p {
+  margin: 0;
+  color: #667085;
+}
+
+.nav-list {
   display: grid;
-  place-items: center;
-  margin: 0 16px 16px;
+  gap: 8px;
+  margin-top: 20px;
+}
+
+.nav-link {
+  display: grid;
+  gap: 4px;
+  padding: 12px;
   border-radius: 8px;
-  background: #dcfce7;
-  color: #166534;
-  font-weight: 600;
+  color: #1f2937;
+  text-decoration: none;
+}
+
+.nav-link small {
+  color: #667085;
+  line-height: 1.4;
+}
+
+.nav-link.router-link-active {
+  background: #eef2ff;
+  color: #3730a3;
+}
+
+.demo-content {
+  min-width: 0;
+  padding: 32px;
+}
+
+@media (max-width: 760px) {
+  .demo-shell {
+    grid-template-columns: 1fr;
+  }
+
+  .demo-sidebar {
+    min-height: auto;
+    border-right: 0;
+    border-bottom: 1px solid #d8dee9;
+  }
 }
 </style>
