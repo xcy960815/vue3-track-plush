@@ -4,7 +4,7 @@ export type TrackEventType = 'click' | 'browse' | 'exposure';
 
 export type TrackAction = '点击事件' | '浏览事件' | '曝光事件';
 
-export type TrackMethod = 'GET' | 'POST';
+export type TrackMethod = 'GET' | 'POST' | 'get' | 'post';
 
 export type TrackParamsValue = string | Record<string, unknown>;
 
@@ -26,6 +26,11 @@ export interface TrackPlushConfig extends Record<string, unknown> {
   method?: TrackMethod;
   buttonName?: string;
   exposureName?: string;
+  timeout?: number;
+  withCredentials?: boolean;
+  headers?: Record<string, string>;
+  retry?: number;
+  retryDelay?: number;
   exposureThreshold?: number;
   exposureOnce?: boolean;
   exposureDuration?: number;
@@ -35,8 +40,36 @@ export interface TrackPlushConfig extends Record<string, unknown> {
   exposureQueueFlushInterval?: number;
   exposureQueueStorageKey?: string;
   exposureQueueStorage?: Storage;
+  queue?: QueueConfig;
+  exposure?: ExposureConfig;
   debug?: boolean;
   transport?: TrackTransport;
+}
+
+export interface QueueConfig {
+  maxBatchSize?: number;
+  flushInterval?: number;
+  storageKey?: string;
+}
+
+export interface ExposureConfig {
+  threshold?: number;
+  duration?: number;
+  root?: Element | Document | null;
+  rootMargin?: string;
+  once?: boolean;
+}
+
+export interface NormalizedTrackPlushConfig extends TrackPlushConfig {
+  exposureThreshold: number;
+  exposureOnce: boolean;
+  exposureDuration: number;
+  exposureRoot: Element | Document | null;
+  exposureRootMargin: string;
+  exposureQueueMaxSize: number;
+  exposureQueueFlushInterval: number;
+  exposureQueueStorageKey: string;
+  debug: boolean;
 }
 
 export type TrackPayloadData = TrackPayload | TrackPayload[];
@@ -48,6 +81,7 @@ export interface TrackPayload extends Record<string, unknown> {
   pageUrl: string;
   projectName: string;
   actionType: TrackAction;
+  timestamp: number;
   pageName?: string;
 }
 
@@ -57,6 +91,11 @@ export interface RequestConfig {
   method?: TrackMethod;
   data: TrackPayloadData;
   debug?: boolean;
+  timeout?: number;
+  withCredentials?: boolean;
+  headers?: Record<string, string>;
+  retry?: number;
+  retryDelay?: number;
 }
 
 export interface TrackTransport {

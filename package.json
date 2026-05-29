@@ -1,12 +1,16 @@
 {
   "name": "vue3-track-plush",
   "description": "基于vue3自定义指令的埋点统计",
-  "version": "1.0.2",
+  "version": "2.0.0",
   "license": "MIT",
   "private": false,
   "main": "dist/vue3-track-plush.umd.js",
   "module": "dist/vue3-track-plush.esm.js",
   "types": "types/vue3-track-plush.d.ts",
+  "files": [
+    "dist",
+    "types"
+  ],
   "scripts": {
     "dev": "vite",
     "dev:plugin": "vite build --config vite.plugin.config.ts --watch",

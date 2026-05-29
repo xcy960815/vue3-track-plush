@@ -1,18 +1,56 @@
-import type { TrackDirectiveContext, TrackEventType, TrackParamsValue } from '../type';
+import type {
+  NormalizedTrackPlushConfig,
+  TrackDirectiveContext,
+  TrackEventType,
+  TrackParamsValue,
+  TrackPlushConfig,
+} from '../type';
 import { getTrackEventDefinition } from '../core/event';
+
+const DEFAULT_EXPOSURE_THRESHOLD = 0.5;
+const DEFAULT_EXPOSURE_DURATION = 0;
+const DEFAULT_EXPOSURE_ONCE = true;
+const DEFAULT_EXPOSURE_ROOT = null;
+const DEFAULT_EXPOSURE_ROOT_MARGIN = '0px';
+const DEFAULT_EXPOSURE_QUEUE_MAX_SIZE = 20;
+const DEFAULT_EXPOSURE_QUEUE_FLUSH_INTERVAL = 2000;
+const DEFAULT_EXPOSURE_QUEUE_STORAGE_KEY = 'vue3-track-plush:exposure-queue';
 
 const SYSTEM_PARAM_KEYS = new Set([
   'baseURL',
+  'debug',
+  'exposure',
   'exposureDuration',
   'exposureOnce',
+  'exposureQueueFlushInterval',
+  'exposureQueueMaxSize',
+  'exposureQueueStorage',
+  'exposureQueueStorageKey',
   'exposureRoot',
   'exposureRootMargin',
   'exposureThreshold',
+  'headers',
   'method',
+  'queue',
+  'retry',
+  'retryDelay',
+  'timeout',
   'transport',
   'type',
   'url',
+  'withCredentials',
 ]);
+
+const getNumberOption = (value: unknown): number | undefined => {
+  if (typeof value !== 'number' || Number.isNaN(value)) return undefined;
+  return value;
+};
+
+const getPositiveNumberOption = (value: unknown): number | undefined => {
+  const numberValue = getNumberOption(value);
+  if (numberValue === undefined || numberValue <= 0) return undefined;
+  return numberValue;
+};
 
 export const normalizeParams = (
   eventType: TrackEventType,
@@ -51,3 +89,31 @@ export const normalizeCustomParams = (
   }, {});
 };
 
+export const normalizeConfig = (config: TrackPlushConfig): NormalizedTrackPlushConfig => ({
+  ...config,
+  exposureThreshold:
+    getNumberOption(config.exposureThreshold) ??
+    getNumberOption(config.exposure?.threshold) ??
+    DEFAULT_EXPOSURE_THRESHOLD,
+  exposureDuration:
+    getNumberOption(config.exposureDuration) ??
+    getNumberOption(config.exposure?.duration) ??
+    DEFAULT_EXPOSURE_DURATION,
+  exposureOnce: config.exposureOnce ?? config.exposure?.once ?? DEFAULT_EXPOSURE_ONCE,
+  exposureRoot: config.exposureRoot ?? config.exposure?.root ?? DEFAULT_EXPOSURE_ROOT,
+  exposureRootMargin:
+    config.exposureRootMargin ?? config.exposure?.rootMargin ?? DEFAULT_EXPOSURE_ROOT_MARGIN,
+  exposureQueueMaxSize:
+    getPositiveNumberOption(config.exposureQueueMaxSize) ??
+    getPositiveNumberOption(config.queue?.maxBatchSize) ??
+    DEFAULT_EXPOSURE_QUEUE_MAX_SIZE,
+  exposureQueueFlushInterval:
+    getPositiveNumberOption(config.exposureQueueFlushInterval) ??
+    getPositiveNumberOption(config.queue?.flushInterval) ??
+    DEFAULT_EXPOSURE_QUEUE_FLUSH_INTERVAL,
+  exposureQueueStorageKey:
+    config.exposureQueueStorageKey ??
+    config.queue?.storageKey ??
+    DEFAULT_EXPOSURE_QUEUE_STORAGE_KEY,
+  debug: config.debug ?? false,
+});

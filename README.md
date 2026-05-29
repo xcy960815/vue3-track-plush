@@ -1,6 +1,8 @@
 # vue3-track-plush
 
-[中文文档](./README.zh-CN.md)
+[中文文档](https://github.com/xcy960815/vue3-track-plush/blob/2.0.0/README.zh-CN.md)
+
+Using Vue 2.7? Use [vue-track-plush](https://www.npmjs.com/package/vue-track-plush).
 
 A lightweight Vue 3 tracking plugin based on custom directives. It supports page view, click, and exposure tracking through directives and manual reporting APIs.
 
@@ -13,6 +15,7 @@ A lightweight Vue 3 tracking plugin based on custom directives. It supports page
 - Configurable exposure options: `threshold`, `duration`, `once`, `root`, and `rootMargin`.
 - Exposure queue with batch flush, interval flush, local storage cache, and page-leave flush.
 - Pluggable transport layer.
+- Built-in transport supports timeout, credentials, custom headers, retry, and retry delay in XHR fallback.
 - Debug mode for local development.
 - Default transport uses `navigator.sendBeacon`, then falls back to `fetch` and `XMLHttpRequest`.
 - TypeScript declarations included.
@@ -174,6 +177,11 @@ app.use(Vue3TrackPlush, {
   method: 'POST',
   pageUrl: window.location.href,
   userAgent: navigator.userAgent,
+  timeout: 10000,
+  withCredentials: true,
+  headers: {},
+  retry: 0,
+  retryDelay: 300,
   exposureThreshold: 0.5,
   exposureDuration: 0,
   exposureOnce: true,
@@ -194,6 +202,11 @@ app.use(Vue3TrackPlush, {
 | `method` | `'GET' \| 'POST'` | No | `'POST'` | Request method. |
 | `pageUrl` | `string` | No | `window.location.href` | Page URL override. |
 | `userAgent` | `string` | No | `navigator.userAgent` | User agent override. |
+| `timeout` | `number` | No | `10000` | XHR fallback timeout in milliseconds. |
+| `withCredentials` | `boolean` | No | `true` | Whether XHR fallback should send credentials. |
+| `headers` | `Record<string, string>` | No | `{}` | Custom headers for XHR fallback. |
+| `retry` | `number` | No | `0` | XHR fallback retry count after failures. |
+| `retryDelay` | `number` | No | `300` | XHR fallback retry delay in milliseconds. |
 | `exposureThreshold` | `number` | No | `0.5` | Default visible ratio for exposure tracking. |
 | `exposureDuration` | `number` | No | `0` | Default visible duration in milliseconds before reporting exposure. |
 | `exposureOnce` | `boolean` | No | `true` | Whether an exposure element should report only once. |
@@ -216,6 +229,7 @@ Every event includes the base context fields and any custom parameters you pass.
   pageUrl: string;
   projectName: string;
   actionType: '点击事件' | '浏览事件' | '曝光事件';
+  timestamp: number;
   buttonName?: string;
   pageName?: string;
   exposureName?: string;
@@ -228,6 +242,8 @@ Click and browse events are sent immediately. Exposure events are queued and flu
 ```ts
 type RequestData = TrackPayload | TrackPayload[];
 ```
+
+When a directive value changes dynamically, `click` updates the payload used on the next click, `browse` reports again, and `exposure` rebinds its observer.
 
 ## Custom Transport
 
