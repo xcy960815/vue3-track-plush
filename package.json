@@ -31,6 +31,10 @@
     "name": "xuchongyu",
     "email": "18763006837@163.com"
   },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/xcy960815/vue3-track-plush.git"
+  },
   "peerDependencies": {
     "vue": "^3.2.13"
   },
