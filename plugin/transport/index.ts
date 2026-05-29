@@ -45,14 +45,59 @@ const sendByFetch = (url: string, method: TrackMethod, data: TrackPayloadData): 
   });
 };
 
-const sendByXhr = (url: string, method: TrackMethod, data: TrackPayloadData): void => {
+const appendQuery = (url: string, data: TrackPayloadData): string => {
+  const payload = Array.isArray(data) ? { list: data } : data;
+  const searchParams = new URLSearchParams();
+
+  Object.entries(payload).forEach(([key, value]) => {
+    if (value === undefined || value === null) return;
+    searchParams.append(key, typeof value === 'string' ? value : JSON.stringify(value));
+  });
+
+  const query = searchParams.toString();
+  if (!query) return url;
+  return `${url}${url.includes('?') ? '&' : '?'}${query}`;
+};
+
+const sendByXhr = (
+  url: string,
+  method: TrackMethod,
+  data: TrackPayloadData,
+  requestConfig?: RequestConfig,
+  retryLeft = requestConfig?.retry || 0,
+): void => {
   const xhr = new XMLHttpRequest();
 
-  xhr.timeout = 10000;
-  xhr.open(method, url, true);
-  xhr.withCredentials = true;
+  xhr.timeout = requestConfig?.timeout || 10000;
+  xhr.open(method, method === 'GET' ? appendQuery(url, data) : url, true);
+  xhr.withCredentials = requestConfig?.withCredentials ?? true;
   xhr.setRequestHeader('Content-type', 'application/json;charset=UTF-8');
-  xhr.send(JSON.stringify(data || {}));
+
+  Object.entries(requestConfig?.headers || {}).forEach(([key, value]) => {
+    try {
+      xhr.setRequestHeader(key, value);
+    } catch (_error) {
+      // Invalid custom headers should not break host applications.
+    }
+  });
+
+  const retryOrFail = () => {
+    if (retryLeft <= 0) return;
+
+    window.setTimeout(() => {
+      sendByXhr(url, method, data, requestConfig, retryLeft - 1);
+    }, requestConfig?.retryDelay || 300);
+  };
+
+  xhr.onerror = retryOrFail;
+  xhr.ontimeout = retryOrFail;
+  xhr.onreadystatechange = () => {
+    if (xhr.readyState !== 4) return;
+    if (xhr.status >= 200 && xhr.status < 300) return;
+    retryOrFail();
+  };
+
+  xhr.send(method === 'GET' ? null : JSON.stringify(data || {}));
 };
 
 export const defaultTransport: TrackTransport = {
@@ -69,6 +114,19 @@ export const defaultTransport: TrackTransport = {
 
     if (method === 'POST' && sendByBeacon(url, requestConfig.data)) return;
 
-    sendByFetch(url, method, requestConfig.data);
+    const canUseFetchFallback =
+      method === 'POST' &&
+      !requestConfig.headers &&
+      requestConfig.withCredentials === undefined &&
+      requestConfig.timeout === undefined &&
+      requestConfig.retry === undefined &&
+      requestConfig.retryDelay === undefined;
+
+    if (canUseFetchFallback) {
+      sendByFetch(url, method, requestConfig.data);
+      return;
+    }
+
+    sendByXhr(url, method, requestConfig.data, requestConfig);
   },
 };

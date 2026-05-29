@@ -2,7 +2,7 @@ import { VNode, DirectiveBinding, App } from 'vue';
 
 type TrackEventType = 'click' | 'browse' | 'exposure';
 type TrackAction = '点击事件' | '浏览事件' | '曝光事件';
-type TrackMethod = 'GET' | 'POST';
+type TrackMethod = 'GET' | 'POST' | 'get' | 'post';
 type TrackParamsValue = string | Record<string, unknown>;
 interface ExposureOptions {
     once?: boolean;
@@ -21,6 +21,11 @@ interface TrackPlushConfig extends Record<string, unknown> {
     method?: TrackMethod;
     buttonName?: string;
     exposureName?: string;
+    timeout?: number;
+    withCredentials?: boolean;
+    headers?: Record<string, string>;
+    retry?: number;
+    retryDelay?: number;
     exposureThreshold?: number;
     exposureOnce?: boolean;
     exposureDuration?: number;
@@ -30,8 +35,22 @@ interface TrackPlushConfig extends Record<string, unknown> {
     exposureQueueFlushInterval?: number;
     exposureQueueStorageKey?: string;
     exposureQueueStorage?: Storage;
+    queue?: QueueConfig;
+    exposure?: ExposureConfig;
     debug?: boolean;
     transport?: TrackTransport;
+}
+interface QueueConfig {
+    maxBatchSize?: number;
+    flushInterval?: number;
+    storageKey?: string;
+}
+interface ExposureConfig {
+    threshold?: number;
+    duration?: number;
+    root?: Element | Document | null;
+    rootMargin?: string;
+    once?: boolean;
 }
 type TrackPayloadData = TrackPayload | TrackPayload[];
 interface TrackPayload extends Record<string, unknown> {
@@ -41,6 +60,7 @@ interface TrackPayload extends Record<string, unknown> {
     pageUrl: string;
     projectName: string;
     actionType: TrackAction;
+    timestamp: number;
     pageName?: string;
 }
 interface RequestConfig {
@@ -49,6 +69,11 @@ interface RequestConfig {
     method?: TrackMethod;
     data: TrackPayloadData;
     debug?: boolean;
+    timeout?: number;
+    withCredentials?: boolean;
+    headers?: Record<string, string>;
+    retry?: number;
+    retryDelay?: number;
 }
 interface TrackTransport {
     send: (requestConfig: RequestConfig) => Promise<void> | void;

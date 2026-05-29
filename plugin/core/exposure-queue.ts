@@ -1,17 +1,17 @@
-import type { RequestConfig, TrackPayload, TrackPlushConfig, TrackTransport } from '../type';
-
-const DEFAULT_EXPOSURE_QUEUE_MAX_SIZE = 20;
-const DEFAULT_EXPOSURE_QUEUE_FLUSH_INTERVAL = 2000;
-const DEFAULT_EXPOSURE_QUEUE_STORAGE_KEY = 'vue3-track-plush:exposure-queue';
+import type {
+  NormalizedTrackPlushConfig,
+  TrackPayload,
+  TrackTransport,
+} from '../type';
 
 interface ExposureQueueOptions {
-  config: TrackPlushConfig;
+  config: NormalizedTrackPlushConfig;
   transport: TrackTransport;
 }
 
 const canUseWindow = (): boolean => typeof window !== 'undefined';
 
-const resolveStorage = (config: TrackPlushConfig): Storage | undefined => {
+const resolveStorage = (config: NormalizedTrackPlushConfig): Storage | undefined => {
   if (config.exposureQueueStorage) return config.exposureQueueStorage;
   if (!canUseWindow()) return undefined;
 
@@ -23,7 +23,7 @@ const resolveStorage = (config: TrackPlushConfig): Storage | undefined => {
 };
 
 export class ExposureQueue {
-  private readonly config: TrackPlushConfig;
+  private readonly config: NormalizedTrackPlushConfig;
 
   private readonly transport: TrackTransport;
 
@@ -44,15 +44,9 @@ export class ExposureQueue {
   public constructor(options: ExposureQueueOptions) {
     this.config = options.config;
     this.transport = options.transport;
-    this.maxSize = this.resolvePositiveNumber(
-      this.config.exposureQueueMaxSize,
-      DEFAULT_EXPOSURE_QUEUE_MAX_SIZE,
-    );
-    this.flushInterval = this.resolvePositiveNumber(
-      this.config.exposureQueueFlushInterval,
-      DEFAULT_EXPOSURE_QUEUE_FLUSH_INTERVAL,
-    );
-    this.storageKey = this.config.exposureQueueStorageKey || DEFAULT_EXPOSURE_QUEUE_STORAGE_KEY;
+    this.maxSize = this.config.exposureQueueMaxSize;
+    this.flushInterval = this.config.exposureQueueFlushInterval;
+    this.storageKey = this.config.exposureQueueStorageKey;
     this.storage = resolveStorage(this.config);
     this.restoreFromStorage();
     this.attachLifecycleFlush();
@@ -82,6 +76,11 @@ export class ExposureQueue {
       url: this.config.url,
       method: this.config.method,
       debug: this.config.debug,
+      timeout: this.config.timeout,
+      withCredentials: this.config.withCredentials,
+      headers: this.config.headers,
+      retry: this.config.retry,
+      retryDelay: this.config.retryDelay,
       data,
     });
 
@@ -146,8 +145,4 @@ export class ExposureQueue {
     this.attachedLifecycleFlush = true;
   }
 
-  private resolvePositiveNumber(value: unknown, fallback: number): number {
-    if (typeof value !== 'number' || Number.isNaN(value) || value <= 0) return fallback;
-    return value;
-  }
 }

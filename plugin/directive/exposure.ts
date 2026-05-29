@@ -1,9 +1,7 @@
 import { TrackerCore } from '../core/tracker';
-import type { ExposureOptions, TrackDirectiveContext, TrackPlushConfig } from '../type';
+import type { ExposureOptions, NormalizedTrackPlushConfig, TrackDirectiveContext } from '../type';
 import { getDirectiveTrackParams } from '../utils/params';
 import { addElementCleanup } from './cleanup';
-
-const DEFAULT_EXPOSURE_THRESHOLD = 0.5;
 
 const getNumberOption = (value: unknown): number | undefined => {
   if (typeof value !== 'number' || Number.isNaN(value)) return undefined;
@@ -13,31 +11,39 @@ const getNumberOption = (value: unknown): number | undefined => {
 const clampThreshold = (threshold: number): number => Math.min(Math.max(threshold, 0), 1);
 
 const resolveExposureOptions = (
-  config: TrackPlushConfig,
+  config: NormalizedTrackPlushConfig,
   params: Record<string, unknown>,
 ): Required<Pick<ExposureOptions, 'once' | 'threshold' | 'duration' | 'rootMargin'>> &
   Pick<ExposureOptions, 'root'> => {
   const threshold =
-    getNumberOption(params.exposureThreshold) ||
-    getNumberOption(params.threshold) ||
-    config.exposureThreshold ||
-    DEFAULT_EXPOSURE_THRESHOLD;
+    getNumberOption(params.exposureThreshold) ??
+    getNumberOption(params.threshold) ??
+    config.exposureThreshold;
 
   const duration =
-    getNumberOption(params.exposureDuration) ||
-    getNumberOption(params.duration) ||
-    config.exposureDuration ||
-    0;
+    getNumberOption(params.exposureDuration) ??
+    getNumberOption(params.duration) ??
+    config.exposureDuration;
 
   return {
-    once: typeof params.once === 'boolean' ? params.once : config.exposureOnce !== false,
+    once:
+      typeof params.once === 'boolean'
+        ? params.once
+        : typeof params.exposureOnce === 'boolean'
+          ? params.exposureOnce
+          : config.exposureOnce,
     threshold: clampThreshold(threshold),
     duration: Math.max(duration, 0),
-    root: (params.root as Element | Document | null | undefined) || config.exposureRoot || null,
+    root:
+      (params.root as Element | Document | null | undefined) ??
+      (params.exposureRoot as Element | Document | null | undefined) ??
+      config.exposureRoot,
     rootMargin:
       typeof params.rootMargin === 'string'
         ? params.rootMargin
-        : config.exposureRootMargin || '0px',
+        : typeof params.exposureRootMargin === 'string'
+          ? params.exposureRootMargin
+          : config.exposureRootMargin,
   };
 };
 
@@ -61,7 +67,7 @@ const removeExposureOptionParams = (params: Record<string, unknown>): Record<str
 export const mountExposureDirective = (
   tracker: TrackerCore,
   context: TrackDirectiveContext,
-  config: TrackPlushConfig,
+  config: NormalizedTrackPlushConfig,
 ): void => {
   const params = getDirectiveTrackParams('exposure', context);
   const options = resolveExposureOptions(config, params);
@@ -120,4 +126,3 @@ export const mountExposureDirective = (
     observer.disconnect();
   });
 };
-

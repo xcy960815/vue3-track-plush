@@ -1,6 +1,8 @@
 # vue3-track-plush
 
-[English](./README.md)
+[English](https://github.com/xcy960815/vue3-track-plush/blob/2.0.0/README.md)
+
+使用 Vue 2.7？请使用 [vue-track-plush](https://www.npmjs.com/package/vue-track-plush)。
 
 一个基于 Vue 3 自定义指令的轻量级埋点插件，支持通过指令和手动 API 上报浏览、点击、曝光事件。
 
@@ -13,6 +15,7 @@
 - 曝光参数可配置：`threshold`、`duration`、`once`、`root`、`rootMargin`。
 - 曝光队列支持数量触发、定时触发、本地缓存和页面离开兜底上报。
 - 支持自定义上报 transport。
+- 默认 transport 支持请求超时、携带凭证、自定义 headers、失败重试和重试间隔。
 - 支持本地开发 debug 模式。
 - 默认上报优先使用 `navigator.sendBeacon`，然后回退到 `fetch` 和 `XMLHttpRequest`。
 - 内置 TypeScript 类型声明。
@@ -174,6 +177,11 @@ app.use(Vue3TrackPlush, {
   method: 'POST',
   pageUrl: window.location.href,
   userAgent: navigator.userAgent,
+  timeout: 10000,
+  withCredentials: true,
+  headers: {},
+  retry: 0,
+  retryDelay: 300,
   exposureThreshold: 0.5,
   exposureDuration: 0,
   exposureOnce: true,
@@ -194,6 +202,11 @@ app.use(Vue3TrackPlush, {
 | `method` | `'GET' \| 'POST'` | 否 | `'POST'` | 请求方法。 |
 | `pageUrl` | `string` | 否 | `window.location.href` | 页面地址覆盖值。 |
 | `userAgent` | `string` | 否 | `navigator.userAgent` | 用户代理覆盖值。 |
+| `timeout` | `number` | 否 | `10000` | XHR fallback 请求超时时间，单位毫秒。 |
+| `withCredentials` | `boolean` | 否 | `true` | XHR fallback 是否携带凭证。 |
+| `headers` | `Record<string, string>` | 否 | `{}` | XHR fallback 自定义请求头。 |
+| `retry` | `number` | 否 | `0` | XHR fallback 失败后的重试次数。 |
+| `retryDelay` | `number` | 否 | `300` | XHR fallback 重试间隔，单位毫秒。 |
 | `exposureThreshold` | `number` | 否 | `0.5` | 默认曝光可见比例。 |
 | `exposureDuration` | `number` | 否 | `0` | 默认曝光停留时长，单位毫秒。 |
 | `exposureOnce` | `boolean` | 否 | `true` | 曝光元素是否只上报一次。 |
@@ -216,6 +229,7 @@ app.use(Vue3TrackPlush, {
   pageUrl: string;
   projectName: string;
   actionType: '点击事件' | '浏览事件' | '曝光事件';
+  timestamp: number;
   buttonName?: string;
   pageName?: string;
   exposureName?: string;
@@ -228,6 +242,8 @@ app.use(Vue3TrackPlush, {
 ```ts
 type RequestData = TrackPayload | TrackPayload[];
 ```
+
+当指令 value 动态变化时，`click` 会更新点击时读取的参数，`browse` 会重新上报一次，`exposure` 会重新绑定观察器。
 
 ## 自定义上报
 
