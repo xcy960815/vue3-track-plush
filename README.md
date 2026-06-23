@@ -1,5 +1,9 @@
 # vue3-track-plush
 
+- Documentation: https://xcy960815.github.io/vue3-track-plush/
+- Online Demo: https://xcy960815.github.io/vue3-track-plush/guide/demo
+- 简体中文: https://xcy960815.github.io/vue3-track-plush/zh-CN/
+
 [中文文档](https://github.com/xcy960815/vue3-track-plush/blob/2.0.0/README.zh-CN.md)
 
 Using Vue 2.7? Use [vue-track-plush](https://www.npmjs.com/package/vue-track-plush).

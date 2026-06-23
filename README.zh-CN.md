@@ -1,5 +1,9 @@
 # vue3-track-plush
 
+- 文档地址：https://xcy960815.github.io/vue3-track-plush/zh-CN/
+- 在线 Demo：https://xcy960815.github.io/vue3-track-plush/zh-CN/guide/demo
+- English：https://xcy960815.github.io/vue3-track-plush/
+
 [English](https://github.com/xcy960815/vue3-track-plush/blob/2.0.0/README.md)
 
 使用 Vue 2.7？请使用 [vue-track-plush](https://www.npmjs.com/package/vue-track-plush)。

@@ -28,9 +28,9 @@
 <script lang="ts" setup>
 import { RouterLink, RouterView } from 'vue-router';
 
-import { caseRoutes } from './router';
+import { demoCases } from './demoCases';
 
-const navRoutes = caseRoutes;
+const navRoutes = demoCases;
 </script>
 
 <style>
