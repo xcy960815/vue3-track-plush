@@ -15,16 +15,11 @@
 
 <script lang="ts" setup>
 import { browseEvent, clickEvent, exposureEvent } from '../../plugin';
-
-const requestConfig = {
-  baseURL: '/track-api',
-  url: '/action/record',
-  projectName: 'vue3-track-plush-demo',
-};
+import { demoTrackConfig } from '../demoTrackConfig';
 
 const customClickReport = () => {
   clickEvent({
-    ...requestConfig,
+    ...demoTrackConfig,
     buttonName: '自定义点击按钮',
     routeName: 'manual',
   });
@@ -32,7 +27,7 @@ const customClickReport = () => {
 
 const customBrowseReport = () => {
   browseEvent({
-    ...requestConfig,
+    ...demoTrackConfig,
     pageName: '自定义浏览页面',
     routeName: 'manual',
   });
@@ -40,7 +35,7 @@ const customBrowseReport = () => {
 
 const customExposureReport = () => {
   exposureEvent({
-    ...requestConfig,
+    ...demoTrackConfig,
     exposureName: '自定义曝光区域',
     routeName: 'manual',
   });
@@ -73,4 +68,3 @@ const customExposureReport = () => {
   background: #ffffff;
 }
 </style>
-
