@@ -19,11 +19,11 @@ import Vue3TrackPlush, {
 
 ## 指令签名
 
-| 指令 | 触发时机 | 字符串值映射字段 |
-| --- | --- | --- |
-| `v-track:click` | 用户点击绑定元素时 | `buttonName` |
-| `v-track:browse` | 绑定元素挂载时 | `pageName` |
-| `v-track:exposure` | 元素进入视口且满足曝光条件时 | `exposureName` |
+| 指令               | 触发时机                     | 字符串值映射字段 |
+| ------------------ | ---------------------------- | ---------------- |
+| `v-track:click`    | 用户点击绑定元素时           | `buttonName`     |
+| `v-track:browse`   | 绑定元素挂载时               | `pageName`       |
+| `v-track:exposure` | 元素进入视口且满足曝光条件时 | `exposureName`   |
 
 ### 推荐写法
 
@@ -68,16 +68,16 @@ exposureEvent({
 
 ## 核心配置
 
-| 配置项 | 类型 | 必填 | 说明 |
-| --- | --- | --- | --- |
-| `projectName` | `string` | 是 | 每条埋点都会携带的项目标识 |
-| `baseURL` | `string` | 是 | 接口域名或基础路径 |
-| `url` | `string` | 是 | 埋点接口路径 |
-| `method` | `'GET' \| 'POST'` | 否 | 内置 transport 使用的请求方法 |
-| `pageUrl` | `string` | 否 | 覆盖自动采集的页面地址 |
-| `userAgent` | `string` | 否 | 覆盖自动采集的用户代理 |
-| `debug` | `boolean` | 否 | 打印 payload 并跳过真实请求 |
-| `transport` | `TrackTransport` | 否 | 替换内置上报实现 |
+| 配置项        | 类型              | 必填 | 说明                          |
+| ------------- | ----------------- | ---- | ----------------------------- |
+| `projectName` | `string`          | 是   | 每条埋点都会携带的项目标识    |
+| `baseURL`     | `string`          | 是   | 接口域名或基础路径            |
+| `url`         | `string`          | 是   | 埋点接口路径                  |
+| `method`      | `'GET' \| 'POST'` | 否   | 内置 transport 使用的请求方法 |
+| `pageUrl`     | `string`          | 否   | 覆盖自动采集的页面地址        |
+| `userAgent`   | `string`          | 否   | 覆盖自动采集的用户代理        |
+| `debug`       | `boolean`         | 否   | 打印 payload 并跳过真实请求   |
+| `transport`   | `TrackTransport`  | 否   | 替换内置上报实现              |
 
 ## 曝光相关配置
 

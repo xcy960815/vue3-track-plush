@@ -68,16 +68,16 @@ exposureEvent({
 
 ## Core config
 
-| Option | Type | Required | Description |
-| --- | --- | --- | --- |
-| `projectName` | `string` | Yes | Project identifier attached to every payload |
-| `baseURL` | `string` | Yes | API origin or base path |
-| `url` | `string` | Yes | Tracking endpoint path |
-| `method` | `'GET' \| 'POST'` | No | Request method for the built-in transport |
-| `pageUrl` | `string` | No | Override the collected page URL |
-| `userAgent` | `string` | No | Override the collected user agent |
-| `debug` | `boolean` | No | Print payloads and skip real requests |
-| `transport` | `TrackTransport` | No | Replace the built-in request transport |
+| Option        | Type              | Required | Description                                  |
+| ------------- | ----------------- | -------- | -------------------------------------------- |
+| `projectName` | `string`          | Yes      | Project identifier attached to every payload |
+| `baseURL`     | `string`          | Yes      | API origin or base path                      |
+| `url`         | `string`          | Yes      | Tracking endpoint path                       |
+| `method`      | `'GET' \| 'POST'` | No       | Request method for the built-in transport    |
+| `pageUrl`     | `string`          | No       | Override the collected page URL              |
+| `userAgent`   | `string`          | No       | Override the collected user agent            |
+| `debug`       | `boolean`         | No       | Print payloads and skip real requests        |
+| `transport`   | `TrackTransport`  | No       | Replace the built-in request transport       |
 
 ## Exposure config
 

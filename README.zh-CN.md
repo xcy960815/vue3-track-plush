@@ -64,9 +64,7 @@ app.mount('#app');
 ```vue
 <template>
   <section v-track:browse="{ pageName: '首页' }">
-    <button v-track:click="{ buttonName: '创建订单' }">
-      创建订单
-    </button>
+    <button v-track:click="{ buttonName: '创建订单' }">创建订单</button>
   </section>
 </template>
 ```
@@ -119,7 +117,7 @@ app.mount('#app');
     exposureName: '价格卡片',
     threshold: 0.75,
     duration: 1000,
-    once: true
+    once: true,
   }"
 >
   价格卡片
@@ -133,10 +131,7 @@ app.mount('#app');
 ```vue
 <button v-track:click track-params="旧写法按钮">旧写法按钮</button>
 
-<button
-  v-track:click
-  :track-params="{ buttonName: '旧写法对象按钮', moduleName: 'legacy' }"
->
+<button v-track:click :track-params="{ buttonName: '旧写法对象按钮', moduleName: 'legacy' }">
   旧写法对象按钮
 </button>
 ```

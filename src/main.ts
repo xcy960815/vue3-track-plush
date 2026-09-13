@@ -2,6 +2,7 @@ import { createApp } from 'vue';
 
 import Vue3TrackPlush from '../plugin';
 import App from './App.vue';
+import './demo-case.css';
 import { demoTrackConfig } from './demoTrackConfig';
 import { router } from './router';
 

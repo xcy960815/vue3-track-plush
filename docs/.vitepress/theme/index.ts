@@ -3,6 +3,7 @@ import type { Theme } from 'vitepress';
 
 import Vue3TrackPlush from '../../../plugin';
 import { demoTrackConfig } from '../../../src/demoTrackConfig';
+import '../../../src/demo-case.css';
 import DocsEmbeddedDemo from '../../../src/docs/EmbeddedDemo.vue';
 
 import './style.css';

@@ -10,17 +10,10 @@
     "jsx": "preserve",
     "noLib": false,
     "target": "ES2015",
-    "lib": [
-      "ESNext",
-      "DOM"
-    ],
+    "lib": ["ESNext", "DOM"],
     "paths": {
-      "@/*": [
-        "./src/*"
-      ],
-      "@plugin/*": [
-        "./plugin/*"
-      ]
+      "@/*": ["./src/*"],
+      "@plugin/*": ["./plugin/*"]
     },
     "allowSyntheticDefaultImports": true,
     "experimentalDecorators": true,
@@ -30,14 +23,8 @@
     "declarationDir": "./temp",
     "noEmit": true
   },
-  "include": [
-    "src/**/*.ts",
-    "src/**/*.vue"
-  ],
-  "exclude": [
-    "./temp",
-    "dist"
-  ],
+  "include": ["src/**/*.ts", "src/**/*.vue"],
+  "exclude": ["./temp", "dist"],
   "files": [
     "plugin/index.ts",
     "plugin/core/event.ts",

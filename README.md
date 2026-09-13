@@ -64,9 +64,7 @@ Use the directive argument to choose the event type.
 ```vue
 <template>
   <section v-track:browse="{ pageName: 'Home' }">
-    <button v-track:click="{ buttonName: 'Create order' }">
-      Create order
-    </button>
+    <button v-track:click="{ buttonName: 'Create order' }">Create order</button>
   </section>
 </template>
 ```
@@ -119,7 +117,7 @@ Per-element exposure options can override global options.
     exposureName: 'Pricing card',
     threshold: 0.75,
     duration: 1000,
-    once: true
+    once: true,
   }"
 >
   Pricing card
@@ -133,10 +131,7 @@ The plugin still supports the previous `track-params` syntax for compatibility.
 ```vue
 <button v-track:click track-params="Legacy button">Legacy button</button>
 
-<button
-  v-track:click
-  :track-params="{ buttonName: 'Legacy object button', moduleName: 'legacy' }"
->
+<button v-track:click :track-params="{ buttonName: 'Legacy object button', moduleName: 'legacy' }">
   Legacy object button
 </button>
 ```

@@ -1,30 +1,234 @@
+/* -------------------------------------------------------------------------
+   vue3-track-plush docs theme
+   与本地 Playground 同一套设计语言：暗色青柠绿/青绿，亮色深绿/深青。
+------------------------------------------------------------------------- */
+
+/* --------------------------------------------------------------- palette */
+
 :root {
-  --vp-c-brand-1: #0284c7;
-  --vp-c-brand-2: #0369a1;
-  --vp-c-brand-3: #075985;
-  --vp-c-brand-soft: rgba(14, 165, 233, 0.14);
-  --vp-c-bg-soft: #f8fbff;
-  --vp-home-hero-name-color: #0f172a;
-  --vp-home-hero-image-background-image:
-    radial-gradient(circle at 20% 20%, rgba(14, 165, 233, 0.35), transparent 36%),
-    radial-gradient(circle at 80% 0%, rgba(37, 99, 235, 0.28), transparent 34%),
-    linear-gradient(135deg, rgba(255, 255, 255, 0.96), rgba(239, 246, 255, 0.96));
-  --vp-home-hero-image-filter: blur(44px);
+  /* light mode · brand */
+  --vp-c-brand-1: #3f9e22;
+  --vp-c-brand-2: #36881d;
+  --vp-c-brand-3: #2c6e17;
+  --vp-c-brand-soft: rgb(63 158 34 / 14%);
+
+  /* light mode · surfaces */
+  --vp-c-bg: #f4f6fa;
+  --vp-c-bg-alt: #eef1f7;
+  --vp-c-bg-elv: #ffffff;
+  --vp-c-bg-soft: #f5f7fb;
+  --vp-c-divider: #dfe5ee;
+  --vp-c-border: #dfe5ee;
+  --vp-c-gutter: #e8edf4;
+  --vp-c-text-1: #1b2733;
+  --vp-c-text-2: #4c5a68;
+  --vp-c-text-3: #93a0ae;
+
+  /* light mode · chrome */
+  --vp-nav-bg-color: rgb(244 246 250 / 82%);
+  --vp-sidebar-bg-color: #f4f6fa;
+
+  /* light mode · code */
+  --vp-code-block-bg: #f6f8fb;
+  --vp-code-color: #2c6e17;
+  --vp-code-bg: rgb(63 158 34 / 10%);
+
+  /* hero */
+  --vp-home-hero-name-color: transparent;
+  --vp-home-hero-name-background: linear-gradient(92deg, #3f9e22 10%, #0d9488 90%);
+
+  font-family:
+    Inter,
+    'PingFang SC',
+    ui-sans-serif,
+    system-ui,
+    -apple-system,
+    'Segoe UI',
+    'Microsoft YaHei',
+    sans-serif;
 }
 
-.VPHomeHero .image-bg {
-  opacity: 1;
+.dark {
+  /* dark mode · brand */
+  --vp-c-brand-1: #9af068;
+  --vp-c-brand-2: #7ddd45;
+  --vp-c-brand-3: #6cc93a;
+  --vp-c-brand-soft: rgb(154 240 104 / 13%);
+
+  /* dark mode · surfaces */
+  --vp-c-bg: #070a0f;
+  --vp-c-bg-alt: #0a0e14;
+  --vp-c-bg-elv: #0c1119;
+  --vp-c-bg-soft: #101722;
+  --vp-c-divider: #1e2836;
+  --vp-c-border: #1e2836;
+  --vp-c-gutter: #17202d;
+  --vp-c-text-1: #eef2f7;
+  --vp-c-text-2: #a8b3bf;
+  --vp-c-text-3: #5c6875;
+
+  /* dark mode · chrome */
+  --vp-nav-bg-color: rgb(7 10 15 / 78%);
+  --vp-sidebar-bg-color: #0a0e14;
+
+  /* dark mode · code */
+  --vp-code-block-bg: #0a0e15;
+  --vp-code-color: #9af068;
+  --vp-code-bg: rgb(154 240 104 / 11%);
+
+  /* hero */
+  --vp-home-hero-name-color: transparent;
+  --vp-home-hero-name-background: linear-gradient(92deg, #9af068 10%, #5eead4 90%);
 }
+
+::selection {
+  background: rgb(94 234 212 / 24%);
+}
+
+.dark ::selection {
+  background: rgb(154 240 104 / 22%);
+}
+
+/* ---------------------------------------------------------------- buttons */
+
+.VPButton.brand {
+  --vp-button-brand-text: #ffffff;
+  --vp-button-brand-hover-text: #ffffff;
+  --vp-button-brand-active-text: #ffffff;
+  border: none;
+  background-image: linear-gradient(135deg, #3f9e22, #0d9488);
+  box-shadow: 0 6px 18px rgb(63 158 34 / 24%);
+  transition:
+    filter 160ms ease,
+    transform 160ms ease;
+}
+
+.VPButton.brand:hover {
+  filter: brightness(1.06);
+  transform: translateY(-1px);
+}
+
+.dark .VPButton.brand {
+  --vp-button-brand-text: #06130a;
+  --vp-button-brand-hover-text: #06130a;
+  --vp-button-brand-active-text: #06130a;
+  background-image: linear-gradient(135deg, #9af068, #5eead4);
+  box-shadow: 0 6px 20px rgb(122 224 108 / 18%);
+}
+
+.VPButton.alt {
+  border-color: var(--vp-c-border);
+  background-color: var(--vp-c-bg-elv);
+}
+
+.VPButton.alt:hover {
+  border-color: var(--vp-c-brand-1);
+  color: var(--vp-c-brand-1);
+}
+
+/* --------------------------------------------------------------- features */
 
 .VPFeature {
-  border-radius: 20px;
-  border: 1px solid rgba(15, 23, 42, 0.06);
+  border-radius: 14px;
+  transition:
+    border-color 200ms ease,
+    transform 200ms ease,
+    box-shadow 200ms ease;
+}
+
+.VPFeature:hover {
+  border-color: var(--vp-c-brand-soft);
+  box-shadow: 0 10px 30px rgb(2 6 12 / 14%);
+}
+
+.dark .VPFeature:hover {
+  border-color: rgb(154 240 104 / 30%);
+  box-shadow: 0 12px 34px rgb(0 0 0 / 35%);
+}
+
+.VPFeature .title {
+  font-weight: 700;
+}
+
+/* -------------------------------------------------------------- home hero */
+
+.VPHomeHero .name {
+  font-family: 'SFMono-Regular', ui-monospace, Menlo, Consolas, 'Liberation Mono', monospace;
+  letter-spacing: -0.035em;
+  background: linear-gradient(92deg, var(--vp-c-brand-1) 10%, #0d9488 90%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.dark .VPHomeHero .name {
+  background: linear-gradient(92deg, #9af068 10%, #5eead4 90%);
+  -webkit-background-clip: text;
+  background-clip: text;
+}
+
+.VPHome {
+  position: relative;
+}
+
+.VPHome::before,
+.VPHome::after {
+  position: absolute;
+  z-index: 0;
+  content: '';
+  border-radius: 50%;
+  filter: blur(80px);
+  pointer-events: none;
+}
+
+.VPHome::before {
+  top: -10rem;
+  left: 8%;
+  width: 40rem;
+  height: 28rem;
+  background: radial-gradient(closest-side, rgb(124 92 255 / 12%), transparent);
+}
+
+.VPHome::after {
+  top: -6rem;
+  right: 4%;
+  width: 34rem;
+  height: 24rem;
+  background: radial-gradient(closest-side, rgb(13 148 136 / 12%), transparent);
+}
+
+.dark .VPHome::before {
+  background: radial-gradient(closest-side, rgb(124 92 255 / 16%), transparent);
+}
+
+.dark .VPHome::after {
+  background: radial-gradient(closest-side, rgb(94 234 212 / 12%), transparent);
+}
+
+.VPHome > * {
+  position: relative;
+  z-index: 1;
+}
+
+/* --------------------------------------------------------------- doc body */
+
+.vp-doc h1 {
+  letter-spacing: -0.02em;
+}
+
+.vp-doc div[class*='language-'] {
+  border: 1px solid var(--vp-c-divider);
+  border-radius: 12px;
+}
+
+.vp-doc div[class*='language-'] code {
+  font-variant-ligatures: none;
+}
+
+.vp-doc .custom-block {
+  border-radius: 12px;
 }
 
 .vp-doc a {
   font-weight: 600;
-}
-
-.vp-doc .custom-block {
-  border-radius: 16px;
 }

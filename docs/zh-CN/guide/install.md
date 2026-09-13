@@ -39,9 +39,7 @@ app.mount('#app');
 ```vue
 <template>
   <section v-track:browse="{ pageName: '首页' }">
-    <button v-track:click="{ buttonName: '创建订单', moduleName: 'checkout' }">
-      创建订单
-    </button>
+    <button v-track:click="{ buttonName: '创建订单', moduleName: 'checkout' }">创建订单</button>
   </section>
 </template>
 ```

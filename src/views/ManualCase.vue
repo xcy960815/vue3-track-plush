@@ -1,5 +1,5 @@
 <template>
-  <article class="case-page" v-track:browse="{ pageName: '手动上报测试页', routeName: 'manual' }">
+  <article v-track:browse="{ pageName: '手动上报测试页', routeName: 'manual' }" class="case-page">
     <header class="case-header">
       <h2>手动上报</h2>
       <p>测试 clickEvent、browseEvent 和 exposureEvent 三个导出方法。</p>
@@ -41,30 +41,3 @@ const customExposureReport = () => {
   });
 };
 </script>
-
-<style scoped>
-.case-page {
-  display: grid;
-  gap: 20px;
-}
-
-.case-header h2 {
-  margin: 0 0 8px;
-  font-size: 28px;
-}
-
-.case-header p {
-  margin: 0;
-  color: #667085;
-}
-
-.case-panel {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 12px;
-  padding: 24px;
-  border: 1px solid #d8dee9;
-  border-radius: 8px;
-  background: #ffffff;
-}
-</style>
